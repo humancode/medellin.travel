@@ -1,0 +1,298 @@
+<?php
+
+require_once DRUPAL_ROOT . '/sites/all/modules/micro/micro.forms.inc';
+
+/**
+* Implements hook_entity_info().
+*/
+function micro_entity_info(){
+  $micro_info['micro'] = array(
+    'label' => t('Micro Site'),
+    'controller class' => 'MicroController',
+    'base table' => 'micro',
+    'uri callback' => 'micro_uri',
+    'fieldable' => TRUE,
+    'entity keys' => array(
+      'id' => 'mid',
+    ),
+    'module' => 'micro',
+    'static cache' => TRUE,
+    'bundles' => array(
+      'micro'=> array(
+        'label' => 'micro',
+        'admin' => array(
+          'path' => 'admin/structure/micro/manage',
+          'access arguments' => array('administer micros'),
+        ),
+      ),
+    ),
+    'view modes' => array(
+      'full' => array(
+        'label' => t('Full Micro Site'),
+        'custom settings' =>  FALSE,
+      ),
+    )
+  );
+  
+  return $micro_info;
+}
+
+
+function micro_uri($micro) {
+  return array(
+    'path' => 'micro/' . $micro->mid,
+  );
+}
+
+
+function micro_menu(){
+  $items['admin/structure/micro/manage'] = array(
+    'title' => 'MicroSitios',
+    'description' => 'Manage micro structure',
+    'page callback' => 'micro_info',
+    'access arguments' => array('administer micros'),
+  );
+  $items['micro/%micro'] = array(
+    'title callback' => 'micro_page_title',
+    'title arguments' => array(1),
+    'page callback' => 'micro_page_view',
+    'page arguments' => array(1),
+    'access arguments' => array('view micros'),
+    'type' => MENU_CALLBACK,
+  );
+  $items['micro/%micro/edit'] = array(
+    'title' => 'Editar',
+    'page callback' => 'micro_page_edit',
+    'page arguments' => array(1),
+    'access arguments' => array('update micros'),
+    'weight' => 0,
+    'type' => MENU_LOCAL_TASK,
+    'context' => MENU_CONTEXT_PAGE | MENU_CONTEXT_INLINE,
+  );
+  $items['micro/%micro/delete'] = array(
+    'title' => 'Delete',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('micro_delete_confirm', 1),
+    'access arguments' => array('delete micros'),
+    'weight' => 1,
+    'type' => MENU_LOCAL_TASK,
+    'context' => MENU_CONTEXT_PAGE | MENU_CONTEXT_INLINE,
+  );
+  $items['micro/%micro/view'] = array(
+    'title' => 'View',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'weight' => -10,
+  );
+  $items['admin/structure/micro/manage/add'] = array(
+    'title' => 'Add new micro',
+    'page callback' => 'micro_add',
+    'access arguments' => array('create micros'),
+    'weight' => 1,
+  );
+  return $items;
+}
+
+function micro_load($mid = NULL, $reset = FALSE){
+  $mids = (isset ($mid) ? array($mid) : array());
+  $micro = micro_load_multiple($mids, $reset);
+  return $micro ? reset ($micro) : FALSE;
+}
+ 
+function micro_load_multiple($mids = array(), $conditions = array(), $reset = FALSE){
+  return entity_load('micro', $mids, $conditions, $reset);
+}
+
+
+function micro_permission(){
+    return array(
+    'administer micros' =>  array(
+      'title' => t('Administer micros'),
+      'restrict access' => TRUE,
+    ),
+    'view postsits' => array(
+      'title' => t('View micros'),
+    )
+  );
+}
+ 
+ 
+function micro_info() {
+  drupal_set_title('Administrar páginas');
+
+  $content = views_embed_view('listmicros', 'list_micros_block');
+  return $content;
+}
+ 
+
+function micro_page_title($micro) {
+  return $micro->name;
+}
+
+function micro_page_view($micro, $view_mode = 'full') {
+  // Remove previously built content, if exists.
+  $micro->content = array();
+  // Build fields content.
+  field_attach_prepare_view('micro', array($micro->mid => $micro), $view_mode);
+  entity_prepare_view('micro', array($micro->mid => $micro));
+  $micro->content += field_attach_view('micro', $micro, $view_mode);
+
+  return $micro->content;
+}
+ 
+
+function micro_add() {
+  $micro = entity_get_controller('micro')->create();
+  drupal_set_title(t('Create MicroSite'));
+
+  return drupal_get_form('micro_form', $micro);
+}
+
+function micro_form($form, &$form_state, $micro) {
+  // Set the id to identify this as an micro edit form.
+  $form['#id'] = 'micro-form';
+  // Save the micro for later, in case we need it.
+  $form['#micro'] = $micro;
+  $form_state['micro'] = $micro;
+
+  // Common fields. We don't have many.
+  $form['name'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Name'),
+    '#weight' => -5,
+    '#required' => TRUE,
+  );
+
+  // Add the buttons.
+  $form['buttons'] = array();
+  $form['buttons']['#weight'] = 100;
+  $form['buttons']['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Save'),
+    '#weight' => 5,
+    '#submit' => array('micro_form_submit'),
+  );
+
+  if (!empty($micro->mid)) {
+  $form['buttons']['delete'] = array(
+    '#access' => user_access('delete micros'),
+    '#type' => 'submit',
+    '#value' => t('Delete'),
+    '#weight' => 15,
+    '#submit' => array('micro_form_delete_submit'),
+    );
+  }
+
+  $form['#validate'][] = 'micro_form_validate';
+  field_attach_form('micro', $micro, $form, $form_state);
+
+  return $form;
+}
+
+function micro_form_validate($form, &$form_state) {
+  $micro = $form_state['micro'];
+  // Field validation.
+  field_attach_form_validate('micro', $micro, $form, $form_state);
+}
+
+function micro_form_submit($form, &$form_state) {
+  global $user;
+  $micro = &$form_state['micro'];
+  // Set the micro's uid if it's being created at this time.
+  if (empty($micro->uid)) {
+    $micro->uid = $user->uid;
+  }
+  $micro->name = $form_state['values']['name'];
+  // Notify field widgets.
+  field_attach_submit('micro', $micro, $form, $form_state);
+  // Save the micro.
+  micro_save($micro);
+  // Notify the user.
+  drupal_set_message(t('micro saved.'));
+  $form_state['redirect'] = 'micro/' . $micro->mid;
+}
+
+function micro_save($micro) {
+  return entity_get_controller('micro')->save($micro);
+}
+
+
+function micro_page_edit($micro) {
+  drupal_set_title(t('Editar página @name', array('@name' => $micro->name)));
+  return drupal_get_form('micro_form', $micro);
+}
+
+function micro_form_delete_submit($form, &$form_state) {
+  $destination = array();
+  if (isset($_GET['destination'])) {
+    $destination = drupal_get_destination();
+    unset($_GET['destination']);
+  }
+  $micro = $form['#micro'];
+  $form_state['redirect'] = array('micro/' . $micro->mid . '/delete', array('query' => $destination));
+}
+
+function micro_delete_confirm($form, &$form_state, $micro) {
+  $form['#micro'] = $micro;
+  $form['mid'] = array('#type' => 'value', '#value' => $micro->mid);
+  return confirm_form($form,
+  t('Seguro que desea eliminar %name?', array('%name' =>
+  $micro->name)),
+  'micro/' . $micro->mid,
+  t('Esta acción no se puede deshacer.'),
+  t('Eliminar'),
+  t('Cancelar')
+  );
+}
+
+function micro_delete_confirm_submit($form, &$form_state) {
+  if ($form_state['values']['confirm']) {
+    $micro = micro_load($form_state['values']['mid']);
+    micro_delete($form_state['values']['mid']);
+
+    watchdog('MicroSite borrado', '%name.', array('%name' => $micro->name));
+    drupal_set_message(t('%name ha sido borrado.', array('%name' => $micro->name)));
+  }
+
+  $form_state['redirect'] = '<front>';
+}
+
+function micro_delete($mid) {
+  return micro_delete_multiple(array($mid));
+}
+
+function micro_delete_multiple($mids) {
+  return entity_get_controller('micro')->delete($mids);
+}
+
+function micros_list() {
+  $query = db_select('micro', 'm')
+  ->fields('m', array('mid','name'))
+  ->addTag('node_access')
+  ->execute();
+  return $query;
+}
+
+
+ 
+function micro_field_extra_fields() {
+  $return = array();
+  $return['micro']['micro'] = array(
+    'form' => array(
+      'micro_name' => array(
+        'label' => t('Nombre'),
+        'description' => t('textfield'),
+      ),
+    ),
+  );
+ 
+  return $return;
+}
+
+
+function micro_views_api() {
+  $return = array(
+    'api' => 3,
+    'path' => drupal_get_path('module', 'micro') . '/includes',
+  );
+  return $return;
+}

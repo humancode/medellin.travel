@@ -1,0 +1,9 @@
+name = MicroSites Module
+description = Módulo apara crear páginas en el sitio.
+core = 7.x
+package = Medellin.travel Modules
+
+files[] = micro.module
+files[] = micro.install
+files[] = micro.controller.inc
+files[] = micro.forms.inc

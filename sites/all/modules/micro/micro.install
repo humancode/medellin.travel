@@ -1,0 +1,26 @@
+<?php
+/*
+ * Creates the tables through schema API
+ */
+function micro_schema() {
+  $schema['micro'] = array (
+    'description' => 'The main store for micros',
+    'fields' => array(
+      'mid' => array(
+        'description' => 'Primary key for our table of micro sites',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'name' => array(
+        'description' => 'The actual name',
+        'type' => 'varchar',
+        'length' => '100',
+        'not null' => TRUE
+      ),
+    ),
+    'primary key' => array('mid'),
+  );
+  
+  return $schema;
+}
