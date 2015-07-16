@@ -147,19 +147,75 @@ function micro_add() {
   return drupal_get_form('micro_form', $micro);
 }
 
+function category_list() {
+  $query = db_select('taxonomy_term_data', 't');
+  $query->join('taxonomy_term_hierarchy', 'h', 't.tid = h.tid');
+  $query->join('taxonomy_vocabulary', 'v', 't.vid = v.vid');
+  $result = $query
+  ->fields('t', array('tid', 'name'))
+  ->fields('h', array('parent'))
+  ->fields('v', array('machine_name'))
+  ->condition('machine_name', 'categoria')
+  ->addTag('node_access')
+  ->execute();
+  return $result;
+}
+
 function micro_form($form, &$form_state, $micro) {
   // Set the id to identify this as an micro edit form.
   $form['#id'] = 'micro-form';
-  // Save the micro for later, in case we need it.
   $form['#micro'] = $micro;
   $form_state['micro'] = $micro;
 
-  // Common fields. We don't have many.
+  // get category options
+  $categories = category_list();
+  $options = array();
+  $cont = 1;
+
+  // builds the options
+  foreach($categories as $category) {
+    $children = taxonomy_get_children($category->tid);
+    if($children || $category->parent == 0) {
+      
+      if($children) {
+        foreach($children as $child) {
+          $options[$category->name][$child->tid] = $child->name;
+        }
+      }
+      else {
+        $options[$category->name] = array($category->tid => $category->name);
+      }
+    }
+  }
+
+  // fields
   $form['name'] = array(
     '#type' => 'textfield',
     '#title' => t('Name'),
     '#weight' => -5,
     '#required' => TRUE,
+    '#default_value' => $micro->name,
+  );
+  $form['category'] = array(
+    '#type' => 'select',
+    '#title' => t('Categoría'),
+    '#options' => $options,
+    '#default_value' => $micro->category,
+  );
+  $form['likes'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Incluir número de likes?'),
+    '#default_value' => $micro->likes,
+  );
+  $form['social_fb'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Incluir ícono para compartir en Facebook?'),
+    '#default_value' => $micro->social_fb,
+  );
+  $form['social_tw'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Incluir ícono para compartir en Twitter?'),
+    '#default_value' => $micro->social_tw,
   );
 
   // Add the buttons.
@@ -202,6 +258,10 @@ function micro_form_submit($form, &$form_state) {
     $micro->uid = $user->uid;
   }
   $micro->name = $form_state['values']['name'];
+  $micro->category = $form_state['values']['category'];
+  $micro->likes = $form_state['values']['likes'];
+  $micro->social_fb = $form_state['values']['social_fb'];
+  $micro->social_tw = $form_state['values']['social_tw'];
   // Notify field widgets.
   field_attach_submit('micro', $micro, $form, $form_state);
   // Save the micro.
@@ -263,15 +323,6 @@ function micro_delete($mid) {
 function micro_delete_multiple($mids) {
   return entity_get_controller('micro')->delete($mids);
 }
-
-function micros_list() {
-  $query = db_select('micro', 'm')
-  ->fields('m', array('mid','name'))
-  ->addTag('node_access')
-  ->execute();
-  return $query;
-}
-
 
  
 function micro_field_extra_fields() {

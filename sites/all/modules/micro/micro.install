@@ -18,6 +18,34 @@ function micro_schema() {
         'length' => '100',
         'not null' => TRUE
       ),
+      'category' => array(
+        'description' => 'TID category',
+        'type' => 'int',
+        'length' => '2',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'likes' => array(
+        'description' => 'Number of likes',
+        'type' => 'int',
+        'length' => '5',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'social_fb' => array(
+        'description' => 'If facebook icon is visible',
+        'type' => 'int',
+        'length' => '1',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'social_tw' => array(
+        'description' => 'If twitter icon is visible',
+        'type' => 'int',
+        'length' => '1',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
     ),
     'primary key' => array('mid'),
   );

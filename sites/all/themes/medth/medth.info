@@ -1,0 +1,21 @@
+name = Medellin.travel Theme
+description = Tema para el sitio medellin.travel
+core = 7.x
+
+regions[header] = Header
+regions[highlighted] = Highlighted
+regions[help] = Help
+regions[content] = Content
+regions[sidebar_first] = Left sidebar
+regions[sidebar_second] = Right sidebar
+regions[footer] = Footer
+
+stylesheets[all][] = css/normalize.css
+stylesheets[all][] = css/bootstrap.css
+stylesheets[all][] = css/estilos.css
+stylesheets[all][] = css/fonts.css
+
+scripts[] = js/bootstrap.js
+scripts[] = js/jquery.lazylinepainter-1.5.1.js
+scripts[] = js/funciones.js
+
