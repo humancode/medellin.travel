@@ -1,0 +1,144 @@
+<?php
+
+/*
+ * Query to get all categories parents
+ */
+function query_items_footer_links($nid) {
+  $query = db_select('node', 'n');
+  $query->join('field_data_field_home_footer_link', 'l', 'n.nid = l.entity_id');
+  $result = $query
+  ->fields('l', array('field_home_footer_link_field_home_footer_link_txt_value', 'field_home_footer_link_field_home_footer_link_url_value'))
+  //->condition('n.nid', $nid)
+  ->addTag('node_access')
+  ->execute();
+  return $result;
+}
+
+/*
+ * Query to get all categories parents
+ */
+function query_items_footer_txts($nid) {
+  $query = db_select('node', 'n');
+  $query->join('field_data_field_home_footer_txt', 't', 'n.nid = t.entity_id');
+  $result = $query
+  ->fields('t', array('field_home_footer_txt_value'))
+  ->condition('n.nid', $nid)
+  ->addTag('node_access')
+  ->execute();
+  return $result;
+}
+
+/*
+ * Query to get all micros
+ */
+function query_all_footer_blocks() {
+  $query = db_select('node', 'n');
+  $query->join('field_data_field_home_footer_type', 't', 'n.nid = t.entity_id');
+  $result = $query
+  ->fields('n', array('nid', 'title'))
+  ->fields('t', array('field_home_footer_type_value'))
+  ->condition('n.type', 'bloques_footer')
+  ->addTag('node_access')
+  ->execute();
+  return $result;
+}
+/**
+* Implements hook_block_info().
+*/
+function home_footer_block_info() {
+  $blocks = array();
+
+  $blocks['home_footer_block'] = array(
+    'info' => t('Bloques para el mfooter'),
+  );
+
+  return $blocks;
+}
+
+/**
+* Implements hook_block_view().
+*/
+function home_footer_block_view($delta = '') {
+  $block = array(
+    'subject' => '',
+    'content' => '',
+  );
+
+  if ($delta == 'home_footer_block') {
+    $block['subject'] = t('Home Footer Block');
+    $items = array();
+
+    if (user_access('access content')) {
+      
+      $items = array();
+
+      $nids = query_all_footer_blocks();
+
+      foreach($nids as $nid) {
+
+        switch($nid->field_home_footer_type_value) {
+          case 'link':
+            $footer_items = query_items_footer_links($nid->nid);
+            break;
+          case 'txt':
+            $footer_items = query_items_footer_txts($nid->nid);
+            break;
+        }
+
+        $block_items = array();
+
+        foreach ($footer_items as $footer_item) {
+          $block_items[] = $footer_item;
+        }
+
+        $items[] = array(
+          'data' => array(
+            '#title' => $nid->title,
+            '#type' => $nid->field_home_footer_type_value,
+            '#items' => $block_items,
+            '#theme' => 'home_footer_block',
+          ),
+        );
+      }
+
+      
+      if (!empty($items)) {
+        $block['content'] = $items;
+      }
+    }
+  }
+  return $block;
+}
+
+/**
+* Implements hook_theme().
+*/
+function home_footer_theme($existing, $type, $theme, $path) {
+  return array(
+    'home_footer_block' => array(
+      'variables' => array(
+        'title' => NULL,
+        'type' => NULL,
+        'items' => NULL,
+      ),
+      'template' => 'home-footer-block',
+    ),
+  );
+}
+
+/**
+* Preprocesses home block.
+*/
+function template_preprocess_home_footer_block(&$variables) {
+  $items = $variables['items'];
+  $title = $variables['title'];
+  $type = $variables['type'];
+  // get the current language
+
+  $variables['title'] = $title;
+  $variables['type'] = $type;
+  $variables['items'] = $items;
+
+  //var_dump($variables);
+
+}

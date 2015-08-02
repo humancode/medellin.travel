@@ -1,0 +1,6 @@
+name = Field Categorías
+description = Field para cargar categorías atrvés de combobox
+core = 7.x
+package = Medellin.travel Modules
+
+files[] = field_cats.module

@@ -1,0 +1,115 @@
+<?php
+
+function get_micros() {
+  $query = db_select('micro', 'm')
+  ->fields('m', array('mid', 'name'))
+  ->addTag('node_access')
+  ->execute();
+  return $query;
+}
+
+function field_cats_field_info() {
+  return array(
+  	'categories' => array(
+	  'label' => t('Field Categorías'),
+	  'description' => t('Show all taxonomy terms.'),
+	  'default_widget' => 'field_cats_widget',
+	  'default_formatter' => 'field_cats_default',
+	),
+  );
+}
+
+function field_cats_field_schema($field) {
+  if ($field['type'] == 'categories') {
+  	$schema['columns']['tid'] = array(
+  	  'type' => 'int',
+  	  'not null' => FALSE,
+	   );
+
+  	$schema['indexes'] = array(
+      'tid' => array('tid'),
+    );
+  }
+
+  return $schema;
+}
+
+function field_cats_field_is_empty($item, $field) {
+  if ($field['type'] == 'categories') {
+	  if (empty($item['tid'])) {
+	    return TRUE;
+	   }
+	}
+	return FALSE;
+}
+
+
+
+function field_cats_field_widget_info() {
+  return array(
+    'field_cats_widget' => array(
+      'label' => t('Select Widget'),
+      'description' => t('Select with all categories'),
+      'field types' => array('categories'),
+      'behaviors' => array(
+        'multiple values' => FIELD_BEHAVIOR_DEFAULT,
+        'default value' => FIELD_BEHAVIOR_DEFAULT,
+      ),
+    ),
+  );
+}
+
+
+function field_cats_field_widget_form(&$form, &$form_state, $field, $instance, $langcode, $items, $delta, $element) {
+  $base = $element;
+  if($instance['widget']['type'] == 'field_cats_widget') { 
+    
+      // get category options
+      $categories = get_micros();
+      $options = array();
+
+      foreach($categories as $category) {
+        $options[$category->mid] = $category->name;
+      }
+      
+
+      $element['tid'] = array(
+        '#type' => 'select',
+        '#title' => t('Página'),
+        '#default_value' => isset($items[$delta]['cat']) ? $items[$delta]['units'] : NULL,
+        '#options' => $options,
+      );
+  }
+  return $element;
+}
+
+
+
+
+function field_cats_field_formatter_info() {
+  return array(
+    'field_cats_default' => array(
+      'label' => t('Default'),
+      'field types' => array('categories'),
+    ),
+  );
+}
+
+
+function field_cats_field_formatter_view($obj_type, $object, $field, $instance, $langcode, $items, $display) {
+  $element = array();
+  $settings = $display['settings'];
+  switch ($display['type']) {
+    case 'field_cats_default':
+      foreach ($items as $delta => $item) {
+        $output = t('TID is @tid', array(
+        '@tid' => $item['tid'],
+        ));
+
+        $element[$delta] = array('#markup' => $output);
+      }
+
+      break;
+      }
+  return $element;
+}

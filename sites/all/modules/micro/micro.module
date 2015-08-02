@@ -47,7 +47,7 @@ function micro_uri($micro) {
 
 function micro_menu(){
   $items['admin/structure/micro/manage'] = array(
-    'title' => 'MicroSitios',
+    'title' => t('Páginas'),
     'description' => 'Manage micro structure',
     'page callback' => 'micro_info',
     'access arguments' => array('administer micros'),
@@ -84,7 +84,7 @@ function micro_menu(){
     'weight' => -10,
   );
   $items['admin/structure/micro/manage/add'] = array(
-    'title' => 'Add new micro',
+    'title' => 'Agregar',
     'page callback' => 'micro_add',
     'access arguments' => array('create micros'),
     'weight' => 1,
@@ -202,6 +202,11 @@ function micro_form($form, &$form_state, $micro) {
     '#options' => $options,
     '#default_value' => $micro->category,
   );
+  $form['special_class'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Clase especial'),
+    '#default_value' => $micro->special_class,
+  );
   $form['likes'] = array(
     '#type' => 'checkbox',
     '#title' => t('Incluir número de likes?'),
@@ -216,6 +221,16 @@ function micro_form($form, &$form_state, $micro) {
     '#type' => 'checkbox',
     '#title' => t('Incluir ícono para compartir en Twitter?'),
     '#default_value' => $micro->social_tw,
+  );
+  $form['share'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Incluir ícono para compartir en otras redes sociales?'),
+    '#default_value' => $micro->share,
+  );
+  $form['bookmarks'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Incluir ícono para agregar a favoritos?'),
+    '#default_value' => $micro->bookmarks,
   );
 
   // Add the buttons.
@@ -260,8 +275,11 @@ function micro_form_submit($form, &$form_state) {
   $micro->name = $form_state['values']['name'];
   $micro->category = $form_state['values']['category'];
   $micro->likes = $form_state['values']['likes'];
+  $micro->special_class = $form_state['values']['special_class'];
   $micro->social_fb = $form_state['values']['social_fb'];
   $micro->social_tw = $form_state['values']['social_tw'];
+  $micro->share = $form_state['values']['share'];
+  $micro->bookmarks = $form_state['values']['bookmarks'];
   // Notify field widgets.
   field_attach_submit('micro', $micro, $form, $form_state);
   // Save the micro.

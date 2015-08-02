@@ -1,0 +1,132 @@
+<?php
+
+function query_entities() {
+  $query = db_select('micro', 'm')
+  ->fields('m', array('mid', 'name', 'category'))
+  ->addTag('node_access')
+  ->execute();
+  return $query;
+}
+
+function query_entity($mid) {
+  $query = db_select('micro', 'm');
+  $query->join('field_data_field_res_img', 'i', 'm.mid = i.entity_id');
+  $query->join('field_data_field_res_title', 't', 'm.mid = t.entity_id');
+  $query->join('field_data_field_res_description', 'd', 'm.mid = d.entity_id');
+  $result = $query
+  ->fields('m', array('mid'))
+  ->fields('i', array('field_res_img_fid'))
+  ->fields('t', array('field_res_title_value'))
+  ->fields('d', array('field_res_description_value'))
+  ->condition('mid', $mid)
+  ->addTag('node_access')
+  ->execute();
+  return $result;
+}
+
+
+ function random_entities() {
+ 	$data = array();
+ 	$entities = query_entities();
+ 	foreach($entities as $entity) {
+		$data[] = $entity->mid;
+	}
+
+ 	$result = array();
+	$ready = false;
+	$rand = 0;
+	$prev = 0;
+	$entity_num = count($data) - 1;
+
+	while($ready == false) {
+		if(count($result) == 3) {
+			$ready = true;
+			break;
+		}
+		else {
+			$rand = rand(0, $entity_num);
+			$value = $data[$rand];
+			if(array_search($value, $result) === false) {
+				$result[] = $value;
+			}
+		}
+	}
+	return $result;
+ } 
+
+
+/**
+* Implements hook_block_info().
+*/
+function related_block_info() {
+  $blocks = array();
+
+  $blocks['related'] = array(
+    'info' => t('Bloque para contenido relacionado'),
+  );
+
+  return $blocks;
+}
+
+function related_block_view($delta = '') {
+  $block = array(
+    'subject' => '',
+    'content' => '',
+  );
+
+  if ($delta == 'related') {
+    $block['subject'] = t('Contenido Relacionado');
+
+    if (user_access('access content')) {
+    	$entities = random_entities();
+
+    	foreach($entities as $entity) {
+    	  $values = query_entity($entity['mid']);
+
+    	  foreach($values as $value) {
+	      	$items[] = array(
+				'data' => array(
+					'#node' => $value,
+					'#theme' => 'related_block_item',
+				),
+			);
+	      }
+        }
+        
+        if (!empty($items)) {
+			$block['content'] = $items;
+		}
+    }
+  }
+  return $block;
+}
+
+/**
+* Implements hook_theme().
+*/
+function related_theme($existing, $type, $theme, $path) {
+	return array(
+		'related_block_item' => array(
+			'variables' => array(
+				'node' => NULL,
+			),
+			'template' => 'related-block-item',
+		),
+	);
+}
+
+/**
+* Preprocesses related block item.
+*/
+function template_preprocess_related_block_item(&$variables) {
+	$node = $variables['node'];
+
+	$img_obj = file_load($node->field_res_img_fid);
+	$img = file_create_url($img_obj->uri);
+
+	$variables['mid'] = $node->mid;
+	$variables['img'] = $img;
+	$variables['title'] = $node->field_res_title_value;
+	$variables['description'] = $node->field_res_description_value;
+
+}

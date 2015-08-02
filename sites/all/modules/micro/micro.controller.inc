@@ -5,10 +5,13 @@ class MicroController extends DrupalDefaultEntityController{
 		return (object) array(
 			'mid' => '',
 			'name' => '',
+			'special_class' => '',
 			'likes' => 0,
 			'category' => 0,
 			'social_fb' => 0,
 			'social_tw' => 0,
+			'share' => 0,
+			'bookmarks' => 0,
 		);
 	}
 

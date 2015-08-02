@@ -1,4 +1,5 @@
 <?php
+ini_set('max_execution_time', 0);
 
 /**
  * @file
@@ -217,7 +218,7 @@ $databases = array (
   array (
     'default' => 
     array (
-      'database' => 'medtrv',
+      'database' => 'mt',
       'username' => 'root',
       'password' => 'root',
       'host' => 'localhost',

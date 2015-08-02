@@ -1,0 +1,8 @@
+name = Home Menu
+description = Módulo para gestionar el menú pricipal
+core = 7.x
+package = Medellin.travel Modules
+
+files[] = home_menu.module
+
+dependencies[] = micro

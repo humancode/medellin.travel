@@ -1,0 +1,24 @@
+name = Medellin.travel Theme
+description = Tema para el sitio medellin.travel
+core = 7.x
+
+regions[content] = Content
+regions[help] = Help
+regions[page_top] = Page top
+regions[page_bottom] = Page bottom
+regions[sidebar_first] = Sidebar first
+regions[sidebar_second] = Sidebar second
+regions[highlighted] = Highlighted
+
+stylesheets[all][] = css/normalize.css
+stylesheets[all][] = css/bootstrap.css
+stylesheets[all][] = css/estilos.css
+stylesheets[all][] = css/idangerous.swiper.css
+
+scripts[] = js/jquery.montage.min.js
+scripts[] = js/bootstrap.js
+scripts[] = js/jquery.lazylinepainter-1.5.1.js
+scripts[] = js/funciones.js
+scripts[] = js/idangerous.swiper.min.js
+
+

@@ -46,6 +46,27 @@ function micro_schema() {
         'not null' => TRUE,
         'default' => 0,
       ),
+      'share' => array(
+        'description' => 'If share icon is visible',
+        'type' => 'int',
+        'length' => '1',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'bookmarks' => array(
+        'description' => 'If bookmarks icon is visible',
+        'type' => 'int',
+        'length' => '1',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'special_class' => array(
+        'description' => 'Special kind of class',
+        'type' => 'varchar',
+        'length' => '20',
+        'not null' => TRUE,
+        'default' => '',
+      ),
     ),
     'primary key' => array('mid'),
   );

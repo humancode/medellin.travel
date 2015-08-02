@@ -1,0 +1,106 @@
+<?php
+
+/*
+ * Query to get all categories parents
+ */
+function query_category_parents() {
+  $query = db_select('taxonomy_term_data', 'd');
+  $query->join('taxonomy_term_hierarchy', 'h', 'd.tid = h.tid');
+  $query->join('field_data_field_cat_is_subtitle', 's', 'd.tid = s.entity_id');
+  $query->join('field_data_field_taxonomy_class', 't', 'd.tid = t.entity_id');
+  $result = $query
+  ->fields('d', array('tid', 'name', 'vid', 'description'))
+  ->fields('s', array('field_cat_is_subtitle_value'))
+  ->fields('t', array('field_taxonomy_class_value'))
+  ->condition('d.vid', 2)
+  ->condition('h.parent', 0)
+  ->orderBy('d.weight')
+  ->addTag('node_access')
+  ->execute();
+  return $result;
+}
+
+/*
+ * Query to get all micros
+ */
+function query_all_micros($category) {
+  $query = db_select('micro', 'm')
+  ->fields('m', array('mid', 'name'))
+  ->condition('category', $category)
+  ->addTag('node_access')
+  ->execute();
+  return $query;
+}
+/**
+* Implements hook_block_info().
+*/
+function home_menu_block_info() {
+  $blocks = array();
+
+  $blocks['home_menu_block'] = array(
+    'info' => t('Bloques para el menu principal'),
+  );
+
+  return $blocks;
+}
+
+/**
+* Implements hook_block_view().
+*/
+function home_menu_block_view($delta = '') {
+  $block = array(
+    'subject' => '',
+    'content' => '',
+  );
+
+  if ($delta == 'home_menu_block') {
+    $block['subject'] = t('Home Menu Block');
+    $items = array();
+
+    if (user_access('access content')) {
+      $result = query_category_parents();
+      $items = array();
+
+      foreach ($result as $node) {
+        $items[] = array(
+          'data' => array(
+            '#node' => $node,
+            '#theme' => 'home_menu_block',
+          ),
+        );
+
+      }
+      if (!empty($items)) {
+        $block['content'] = $items;
+      }
+    }
+  }
+  return $block;
+}
+
+/**
+* Implements hook_theme().
+*/
+function home_menu_theme($existing, $type, $theme, $path) {
+  return array(
+    'home_menu_block' => array(
+      'variables' => array(
+        'node' => NULL,
+      ),
+      'template' => 'home-menu-block',
+    ),
+  );
+}
+
+/**
+* Preprocesses home block.
+*/
+function template_preprocess_home_menu_block(&$variables) {
+  $node = $variables['node'];
+  // get the current language
+  $lang = entity_language('micro', $node);
+
+  $variables['tid'] = $node->tid;
+  $variables['name'] = $node->name;
+  $variables['cols'] = $node->field_taxonomy_class_value;
+}
