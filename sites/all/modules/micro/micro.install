@@ -67,6 +67,11 @@ function micro_schema() {
         'not null' => TRUE,
         'default' => '',
       ),
+      'micro_lang' => array(
+        'type' => 'varchar',
+        'length' => 5,
+        'not null' => FALSE,
+      ),  
     ),
     'primary key' => array('mid'),
   );

@@ -25,6 +25,35 @@ function get_home_block($block) {
 }
 
 /*
+ * Query SQL to get all fileds of home table
+ */
+function get_home_data() {
+  $query = db_select('home_vars', 'h')
+  ->fields('h')
+  ->addTag('node_access')
+  ->execute()
+  ->fetchAll(PDO::FETCH_ASSOC);
+  return $query;
+}
+
+/*
+ * Query SQL to check if empty table
+ */
+function is_empty_home() {
+  $query = db_select('home_vars', 'h')
+  ->fields('h', array('hid'))
+  ->addTag('node_access')
+  ->execute()
+  ->fetchAll(PDO::FETCH_ASSOC);
+
+  if(empty($query)) {
+    return TRUE;
+  }
+
+  return FALSE;
+}
+
+/*
  * Implements hook_menu().
  */
 function home_menu() {
@@ -54,6 +83,9 @@ function home_permission(){
 * Form builder
 */
 function home_form($form, &$form_state) {
+   $data = get_home_data();
+   $data = $data[0];
+
    $form['home_logo'] = array(
     '#type' => 'managed_file',
     '#title' => t('Logo'),
@@ -64,7 +96,7 @@ function home_form($form, &$form_state) {
       'file_validate_size' => array(1 * 1024 * 1024),
     ),
     '#upload_location' => 'public://logos/',
-    '#default_value' => variable_get('home_logo'),
+    '#default_value' => $data['logo'],
   );
   $form['home_video'] = array(
     '#type' => 'managed_file',
@@ -74,7 +106,7 @@ function home_form($form, &$form_state) {
       'file_validate_extensions' => array('mp4 ovg webm'),
     ),
     '#upload_location' => 'public://home_video/',
-    '#default_value' => variable_get('home_video'),
+    '#default_value' => $data['video'],
   );
    $form['home_video_img'] = array(
     '#type' => 'managed_file',
@@ -86,24 +118,40 @@ function home_form($form, &$form_state) {
       'file_validate_size' => array(1 * 1024 * 1024),
     ),
     '#upload_location' => 'public://home_video_img/',
-    '#default_value' => variable_get('home_video_img'),
+    '#default_value' => $data['video_img'],
   );
   $form['home_title'] = array(
     '#type' => 'textfield',
     '#title' => t('Titulo'),
     '#required' => TRUE,
-    '#default_value' => variable_get('home_title'),
+    '#default_value' => $data['title'],
+  );
+  $form['home_title_en'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Titulo (Inglés)'),
+    '#required' => TRUE,
+    '#default_value' => $data['title_en'],
   );
   $form['home_description'] = array(
     '#type' => 'textarea',
     '#title' => t('Descripción'),
     '#required' => TRUE,
-    '#default_value' => variable_get('home_description'),
+    '#default_value' => $data['description'],
   );
-  $form['home_footer'] = array(
+  $form['home_description_en'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Descripción (Inglés)'),
+    '#required' => TRUE,
+    '#default_value' => $data['description_en'],
+  );
+  $form['footer'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Footer'),
+  );
+  $form['footer']['home_footer'] = array(
     '#type' => 'checkbox',
     '#title' => t('Incluir footer?'),
-    '#default_value' => variable_get('home_footer'),
+    '#default_value' => $data['home_footer'],
   );
   $form['tabs'] = array(
     '#type' => 'fieldset',
@@ -112,17 +160,17 @@ function home_form($form, &$form_state) {
   $form['tabs']['home_que_visitar'] = array(
     '#type' => 'checkbox',
     '#title' => t('Incluir tab Que Visitar?'),
-    '#default_value' => variable_get('home_que_visitar'),
+    '#default_value' => $data['tab_que_visitar'],
   );
   $form['tabs']['home_donde_quedarme'] = array(
     '#type' => 'checkbox',
     '#title' => t('Incluir tab Donde Quedarme?'),
-    '#default_value' => variable_get('home_donde_quedarme'),
+    '#default_value' => $data['tab_donde_quedarme'],
   );
   $form['tabs']['home_como_moverme'] = array(
     '#type' => 'checkbox',
     '#title' => t('Incluir tab Como Moverme?'),
-    '#default_value' => variable_get('home_como_moverme'),
+    '#default_value' => $data['tab_como_moverme'],
   );
   $form['social'] = array(
     '#type' => 'fieldset',
@@ -132,12 +180,12 @@ function home_form($form, &$form_state) {
   $form['social']['home_facebook'] = array(
     '#type' => 'checkbox',
     '#title' => t('Incluir Facebook'),
-    '#default_value' => variable_get('home_facebook'),
+    '#default_value' => $data['home_facebook'],
   );
   $form['social']['home_facebook_link'] = array(
     '#type' => 'textfield',
     '#title' => t('Link'),
-    '#default_value' => variable_get('home_facebook_link'),
+    '#default_value' => $data['home_facebook_link'],
     '#states' => array(
       'invisible' => array(
        ':input[name="home_facebook"]' => array('checked' => FALSE),
@@ -150,12 +198,12 @@ function home_form($form, &$form_state) {
   $form['social']['home_twitter'] = array(
     '#type' => 'checkbox',
     '#title' => t('Incluir Twitter'),
-    '#default_value' => variable_get('home_twitter'),
+    '#default_value' => $data['home_twitter'],
   );
   $form['social']['home_twitter_link'] = array(
     '#type' => 'textfield',
     '#title' => t('Link'),
-    '#default_value' => variable_get('home_twitter_link'),
+    '#default_value' => $data['home_twitter_link'],
     '#states' => array(
       'invisible' => array(
        ':input[name="home_twitter"]' => array('checked' => FALSE),
@@ -168,12 +216,12 @@ function home_form($form, &$form_state) {
   $form['social']['home_flickr'] = array(
     '#type' => 'checkbox',
     '#title' => t('Incluir flickr'),
-    '#default_value' => variable_get('home_flickr'),
+    '#default_value' => $data['home_flickr'],
   );
   $form['social']['home_flickr_link'] = array(
     '#type' => 'textfield',
     '#title' => t('Link'),
-    '#default_value' => variable_get('home_flickr_link'),
+    '#default_value' => $data['home_flickr_link'],
     '#states' => array(
       'invisible' => array(
        ':input[name="home_flickr"]' => array('checked' => FALSE),
@@ -186,12 +234,12 @@ function home_form($form, &$form_state) {
   $form['social']['home_youtube'] = array(
     '#type' => 'checkbox',
     '#title' => t('Incluir youtube'),
-    '#default_value' => variable_get('home_youtube'),
+    '#default_value' => $data['home_youtube'],
   );
   $form['social']['home_youtube_link'] = array(
     '#type' => 'textfield',
     '#title' => t('Link'),
-    '#default_value' => variable_get('home_youtube_link'),
+    '#default_value' => $data['home_youtube_link'],
     '#states' => array(
       'invisible' => array(
        ':input[name="home_youtube"]' => array('checked' => FALSE),
@@ -204,12 +252,12 @@ function home_form($form, &$form_state) {
   $form['social']['home_linkedin'] = array(
     '#type' => 'checkbox',
     '#title' => t('Incluir linkedin'),
-    '#default_value' => variable_get('home_linkedin'),
+    '#default_value' => $data['home_linkedin'],
   );
   $form['social']['home_linkedin_link'] = array(
     '#type' => 'textfield',
     '#title' => t('Link'),
-    '#default_value' => variable_get('home_linkedin_link'),
+    '#default_value' => $data['home_linkedin_link'],
     '#states' => array(
       'invisible' => array(
        ':input[name="home_linkedin"]' => array('checked' => FALSE),
@@ -222,12 +270,12 @@ function home_form($form, &$form_state) {
   $form['social']['home_instagram'] = array(
     '#type' => 'checkbox',
     '#title' => t('Incluir instagram'),
-    '#default_value' => variable_get('home_instagram'),
+    '#default_value' => $data['home_instagram'],
   );
   $form['social']['home_instagram_link'] = array(
     '#type' => 'textfield',
     '#title' => t('Link'),
-    '#default_value' => variable_get('home_instagram_link'),
+    '#default_value' => $data['home_instagram_link'],
     '#states' => array(
       'invisible' => array(
        ':input[name="home_instagram"]' => array('checked' => FALSE),
@@ -242,17 +290,31 @@ function home_form($form, &$form_state) {
     '#type' => 'fieldset',
     '#title' => t('Recomendados del Menú'),
   );
-  $form['recommended']['title_one'] = array(
+  $form['recommended']['one'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Primer recomendado'),
+  );
+  $form['recommended']['one']['title_one'] = array(
     '#type' => 'textfield',
     '#title' => t('Titulo'),
-    '#default_value' => variable_get('home_menu_recommended_title_one'),
+    '#default_value' => $data['home_recommended_title_one'],
   );
-  $form['recommended']['description_one'] = array(
+  $form['recommended']['one']['title_one_en'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Titulo (Inglés)'),
+    '#default_value' => $data['home_recommended_title_one_en'],
+  );
+  $form['recommended']['one']['description_one'] = array(
     '#type' => 'textfield',
     '#title' => t('Descripción'),
-    '#default_value' => variable_get('home_menu_recommended_description_one'),
+    '#default_value' => $data['home_recommended_description_one'],
   );
-  $form['recommended']['image_one'] = array(
+  $form['recommended']['one']['description_one_en'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Descripción (Inglés)'),
+    '#default_value' => $data['home_recommended_description_one_en'],
+  );
+  $form['recommended']['one']['image_one'] = array(
     '#type' => 'managed_file',
     '#title' => t('Imagen'),
     '#description' => t('Extensiones permitidas: gif png jpg jpeg'),
@@ -262,20 +324,34 @@ function home_form($form, &$form_state) {
       'file_validate_size' => array(1 * 1024 * 1024),
     ),
     '#upload_location' => 'public://recommended/',
-    '#default_value' => variable_get('home_menu_recommended_image_one'),
+    '#default_value' => $data['home_recommended_image_one'],
+  );
+  $form['recommended']['two'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Segundo recomendado'),
   );
 
-  $form['recommended']['title_two'] = array(
+  $form['recommended']['two']['title_two'] = array(
     '#type' => 'textfield',
     '#title' => t('Titulo'),
-    '#default_value' => variable_get('home_menu_recommended_title_two'),
+    '#default_value' => $data['home_recommended_title_two'],
   );
-  $form['recommended']['description_two'] = array(
+  $form['recommended']['two']['title_two_en'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Titulo (Inglés)'),
+    '#default_value' => $data['home_recommended_title_two_en'],
+  );
+  $form['recommended']['two']['description_two'] = array(
     '#type' => 'textfield',
     '#title' => t('Descripción'),
-    '#default_value' => variable_get('home_menu_recommended_description_two'),
+    '#default_value' => $data['home_recommended_description_two'],
   );
-  $form['recommended']['image_two'] = array(
+  $form['recommended']['two']['description_two_en'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Descripción (Inglés)'),
+    '#default_value' => $data['home_recommended_description_two_en'],
+  );
+  $form['recommended']['two']['image_two'] = array(
     '#type' => 'managed_file',
     '#title' => t('Imagen'),
     '#description' => t('Extensiones permitidas: gif png jpg jpeg'),
@@ -285,12 +361,33 @@ function home_form($form, &$form_state) {
       'file_validate_size' => array(1 * 1024 * 1024),
     ),
     '#upload_location' => 'public://recommended/',
-    '#default_value' => variable_get('home_menu_recommended_image_two'),
+    '#default_value' => $data['home_recommended_image_two'],
+  );
+
+  $form['links_logos'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Links de logos'),
+  );
+
+  $form['links_logos']['home_link_logo_1'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Link uno'),
+    '#default_value' => $data['home_link_logo_1'],
+  );
+  $form['links_logos']['home_link_logo_2'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Link dos'),
+    '#default_value' => $data['home_link_logo_2'],
+  );
+  $form['links_logos']['home_link_logo_3'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Link tres'),
+    '#default_value' => $data['home_link_logo_3'],
   );
 
   $form['submit'] = array(
     '#type' => 'submit',
-    '#value' => t('Enviar'),
+    '#value' => t('Guardar Datos'),
   );
   return $form;
 }
@@ -317,67 +414,191 @@ function home_form_validate($form, &$form_state) {
 * Submit handler
 */
 function home_form_submit($form, &$form_state) {
+
   // set variables
-  variable_set('home_logo', $form_state['values']['home_logo']);
-  variable_set('home_video', $form_state['values']['home_video']);
-  variable_set('home_video_img', $form_state['values']['home_video_img']);
-  variable_set('home_title', $form_state['values']['home_title']);
-  variable_set('home_description', $form_state['values']['home_description']);
+  $home_logo = $form_state['values']['home_logo'];
+  $home_video = $form_state['values']['home_video'];
+  $home_video_img = $form_state['values']['home_video_img'];
+  $home_title = $form_state['values']['home_title'];
+  $home_title_en = $form_state['values']['home_title_en'];
+  $home_description = $form_state['values']['home_description'];
+  $home_description_en = $form_state['values']['home_description_en'];
+  $home_link_logo_1 = $form_state['values']['home_link_logo_1'];
+  $home_link_logo_2 = $form_state['values']['home_link_logo_2'];
+  $home_link_logo_3 = $form_state['values']['home_link_logo_3'];
 
   // menu recommended
-  variable_set('home_menu_recommended_title_one', $form_state['values']['title_one']);
-  variable_set('home_menu_recommended_description_one', $form_state['values']['description_one']);
-  variable_set('home_menu_recommended_image_one', $form_state['values']['image_one']);
-  variable_set('home_menu_recommended_title_two', $form_state['values']['title_two']);
-  variable_set('home_menu_recommended_description_two', $form_state['values']['description_two']);
-  variable_set('home_menu_recommended_image_two', $form_state['values']['image_two']);
+  $home_menu_recommended_title_one = $form_state['values']['title_one'];
+  $home_menu_recommended_title_one_en = $form_state['values']['title_one_en'];
+  $home_menu_recommended_description_one = $form_state['values']['description_one'];
+  $home_menu_recommended_description_one_en = $form_state['values']['description_one_en'];
+  $home_menu_recommended_image_one = $form_state['values']['image_one'];
+
+  $home_menu_recommended_title_two = $form_state['values']['title_two'];
+  $home_menu_recommended_title_two_en = $form_state['values']['title_two_en'];
+  $home_menu_recommended_description_two = $form_state['values']['description_two'];
+  $home_menu_recommended_description_two_en = $form_state['values']['description_two_en'];
+  $home_menu_recommended_image_two =$form_state['values']['image_two'];
   
   //checkboxes
   if(isset($form_state['values']['home_footer']) && ($form_state['values']['home_footer'] == 1)) {
-    variable_set('home_footer', 1);
+    $home_footer = 1;
   }
   else {
-    variable_set('home_footer', 0);
+    $home_footer = 0;
   }
   if(isset($form_state['values']['home_que_visitar']) && ($form_state['values']['home_que_visitar'] == 1)) {
-    variable_set('home_que_visitar', 1);
+    $home_que_visitar = 1;
   }
   else {
-    variable_set('home_que_visitar', 0);
+    $home_que_visitar = 0;
   }
   if(isset($form_state['values']['home_donde_quedarme']) && ($form_state['values']['home_donde_quedarme'] == 1)) {
-    variable_set('home_donde_quedarme', 1);
+    $home_donde_quedarme = 1;
   }
   else {
-    variable_set('home_donde_quedarme', 0);
+    $home_donde_quedarme = 0;
   }
   if(isset($form_state['values']['home_como_moverme']) && ($form_state['values']['home_como_moverme'] == 1)) {
-    variable_set('home_como_moverme', 1);
+    $home_como_moverme = 1;
   }
   else {
-    variable_set('home_como_moverme', 0);
+    $home_como_moverme = 0;
   }
 
-  // social networks
-  $socials = array (
-    'facebook' =>$form_state['values']['home_facebook'],
-    'twitter' => $form_state['values']['home_twitter'],
-    'flickr' => $form_state['values']['home_flickr'],
-    'youtube' => $form_state['values']['home_youtube'],
-    'linkedin' => $form_state['values']['home_linkedin'],
-    'instagram' => $form_state['values']['home_instagram'],
-  );
-  foreach($socials as $social => $value) {
-      $name = 'home_'.$social;
-      if(isset($form_state['values'][$name]) && ($form_state['values'][$name] == 1)) {
-        variable_set($name, 1);
-        variable_set($name.'_link', $form_state['values'][$name.'_link']);
-      }
-      else {
-        variable_set($name, 0);
-      }
+  // socials
+  $home_facebook_link = $form_state['values']['home_facebook_link'];
+  $home_twitter_link = $form_state['values']['home_twitter_link'];
+  $home_youtube_link = $form_state['values']['home_youtube_link'];
+  $home_linkedin_link = $form_state['values']['home_linkedin_link'];
+  $home_instagram_link = $form_state['values']['home_instagram_link'];
+  $home_flickr_link = $form_state['values']['home_flickr_link'];
+
+  if(isset($form_state['values']['home_facebook']) && ($form_state['values']['home_facebook'] == 1)) {
+    $home_facebook = 1;
   }
-  
+  else {
+    $home_facebook = 0;
+  }
+  if(isset($form_state['values']['home_twitter']) && ($form_state['values']['home_twitter'] == 1)) {
+    $home_twitter = 1;
+  }
+  else {
+    $home_twitter = 0;
+  }
+  if(isset($form_state['values']['home_flickr']) && ($form_state['values']['home_flickr'] == 1)) {
+    $home_flickr = 1;
+  }
+  else {
+    $home_flickr = 0;
+  }
+  if(isset($form_state['values']['home_linkedin']) && ($form_state['values']['home_linkedin'] == 1)) {
+    $home_linkedin = 1;
+  }
+  else {
+    $home_linkedin = 0;
+  }
+  if(isset($form_state['values']['home_youtube']) && ($form_state['values']['home_youtube'] == 1)) {
+    $home_youtube = 1;
+  }
+  else {
+    $home_youtube = 0;
+  }
+  if(isset($form_state['values']['home_instagram']) && ($form_state['values']['home_instagram'] == 1)) {
+    $home_instagram = 1;
+  }
+  else {
+    $home_instagram = 0;
+  }
+
+  $empty = is_empty_home();
+
+  if($empty) {
+    $query = db_insert('home_vars')
+    ->fields(array(
+      'logo' => $home_logo,
+      'video' => $home_video,
+      'video_img' => $home_video_img,
+      'title' => $home_title,
+      'title_en' => $home_title_en,
+      'description' => $home_description,
+      'description_en' => $home_description_en,
+      'home_recommended_title_one' => $home_menu_recommended_title_one,
+      'home_recommended_title_one_en' => $home_menu_recommended_title_one_en,
+      'home_recommended_description_one' => $home_menu_recommended_description_one,
+      'home_recommended_description_one_en' => $home_menu_recommended_description_one_en,
+      'home_recommended_image_one' => $home_menu_recommended_image_one,
+      'home_recommended_title_two' => $home_menu_recommended_title_two,
+      'home_recommended_title_two_en' => $home_menu_recommended_title_two_en,
+      'home_recommended_description_two' => $home_menu_recommended_description_two,
+      'home_recommended_description_two_en' => $home_menu_recommended_description_two_en,
+      'home_recommended_image_two' => $home_menu_recommended_image_two,
+      'home_facebook' => $home_facebook,
+      'home_facebook_link' => $home_facebook_link,
+      'home_twitter' => $home_twitter,
+      'home_twitter_link' => $home_twitter_link,
+      'home_youtube' => $home_youtube,
+      'home_youtube_link' => $home_youtube_link,
+      'home_flickr' => $home_flickr,
+      'home_flickr_link' => $home_flickr_link,
+      'home_linkedin' => $home_linkedin,
+      'home_linkedin_link' => $home_linkedin_link,
+      'home_instagram' => $home_instagram,
+      'home_instagram_link' => $home_instagram_link,
+      'home_footer' => $home_footer,
+      'home_link_logo_1' => $home_link_logo_1,
+      'home_link_logo_2' => $home_link_logo_2,
+      'home_link_logo_3' => $home_link_logo_3,
+      'tab_que_visitar' => $home_que_visitar,
+      'tab_donde_quedarme' => $home_footer,
+      'tab_como_moverme' => $home_como_moverme,
+    ))
+    ->execute();
+  }
+  else {
+    $query = db_update('home_vars')
+    ->fields(array(
+      'logo' => $home_logo,
+      'video' => $home_video,
+      'video_img' => $home_video_img,
+      'title' => $home_title,
+      'title_en' => $home_title_en,
+      'description' => $home_description,
+      'description_en' => $home_description_en,
+      'home_recommended_title_one' => $home_menu_recommended_title_one,
+      'home_recommended_title_one_en' => $home_menu_recommended_title_one_en,
+      'home_recommended_description_one' => $home_menu_recommended_description_one,
+      'home_recommended_description_one_en' => $home_menu_recommended_description_one_en,
+      'home_recommended_image_one' => $home_menu_recommended_image_one,
+      'home_recommended_title_two' => $home_menu_recommended_title_two,
+      'home_recommended_title_two_en' => $home_menu_recommended_title_two_en,
+      'home_recommended_description_two' => $home_menu_recommended_description_two,
+      'home_recommended_description_two_en' => $home_menu_recommended_description_two_en,
+      'home_recommended_image_two' => $home_menu_recommended_image_two,
+      'home_facebook' => $home_facebook,
+      'home_facebook_link' => $home_facebook_link,
+      'home_twitter' => $home_twitter,
+      'home_twitter_link' => $home_twitter_link,
+      'home_youtube' => $home_youtube,
+      'home_youtube_link' => $home_youtube_link,
+      'home_flickr' => $home_flickr,
+      'home_flickr_link' => $home_flickr_link,
+      'home_linkedin' => $home_linkedin,
+      'home_linkedin_link' => $home_linkedin_link,
+      'home_instagram' => $home_instagram,
+      'home_instagram_link' => $home_instagram_link,
+      'home_footer' => $home_footer,
+      'home_link_logo_1' => $home_link_logo_1,
+      'home_link_logo_2' => $home_link_logo_2,
+      'home_link_logo_3' => $home_link_logo_3,
+      'tab_que_visitar' => $home_que_visitar,
+      'tab_donde_quedarme' => $home_footer,
+      'tab_como_moverme' => $home_como_moverme
+    ))
+    ->condition('hid', 1)
+    ->execute();
+  }
+
   drupal_set_message('Pagina principal actualizada');
 
 }
@@ -414,20 +635,19 @@ function home_block_view($delta = '') {
       foreach ($result as $node) {
 
         $contents = array();
-        $block_content = get_home_block($node->nid);
+        $block_content = node_load($node->nid);
         
-        foreach($block_content as $content) {
+        /*foreach($block_content as $content) {
           $contents[] = $content;
-        }
+        }*/
 
         $items[] = array(
           'data' => array(
-            '#node' => $node,
-            '#contents_node' => $contents,
+            //'#node' => $node,
+            '#contents_node' => $block_content,
             '#theme' => 'home_block',
           ),
         );
-
       }
       if (!empty($items)) {
         $block['content'] = $items;
@@ -444,7 +664,7 @@ function home_theme($existing, $type, $theme, $path) {
   return array(
     'home_block' => array(
       'variables' => array(
-        'node' => NULL,
+        //'node' => NULL,
         'contents_node' => NULL,
       ),
       'template' => 'home-block',
@@ -456,13 +676,14 @@ function home_theme($existing, $type, $theme, $path) {
 * Preprocesses home block.
 */
 function template_preprocess_home_block(&$variables) {
-  $node = $variables['node'];
   $contents = $variables['contents_node'];
-  // get the current language
-  $lang = entity_language('micro', $node);
 
-  $variables['nid'] = $node->nid;
-  $variables['title'] = $node->title;
-  $variables['contents_num'] = count($contents);
+  $variables['title'] = $contents->title;
+  $variables['blocks'] = field_get_items('node', $contents, 'field_bloque_home_mf');
+  $variables['category'] = $contents->field_home_block_category['und'][0]['tid'];
+  $variables['contents_num'] = count($variables['blocks']);
 
+  $variables['home_link_logo_1'] = field_get_items('node', $contents, 'home_link_logo_1');
+  $variables['home_link_logo_2'] = field_get_items('node', $contents, 'home_link_logo_2');
+  $variables['home_link_logo_3'] = field_get_items('node', $contents, 'home_link_logo_3');
 }

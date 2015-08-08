@@ -1,4 +1,6 @@
+
 <?php
+
 $theme_path = drupal_get_path('theme', 'medtravel') . '/';
 /*
  * Available variables
@@ -24,77 +26,121 @@ $theme_path = drupal_get_path('theme', 'medtravel') . '/';
  *
  * Social Twitter
  * $social_tw
- *
- * Header Img
- * $header_img
- *
- * Header Text
- * $header_txt
- *
- * Main Description
- * $info_description
- *
- * Body Video
- * $body_video
- *
- * Body Img
- * $body_img
- *
- * Body quote
- * $body_quote
- *
- * Body quote author
- * $body_quote_author
- *
- * Map
- * Name: $map[%number]['name']
- * Street: $map[%number]['street']
- * Latitude: $map[%number]['latitude']
- * Longitude: $map[%number]['longitude']
- *
- * Image Gallery
- * Fid: $gallery[number]['fid']
- * Filename: $gallery[number]['filename']
- * Uri: $gallery[number]['uri']
- *
- * Mod Image & Text
- * Img - Fid: $blockImgTxt[%number]['field_mod_img_txt_img']['und'][0]['fid']
- * Img - Filename: $blockImgTxt[%number]['field_mod_img_txt_img']['und'][0]['filename']
- * Title: $blockImgTxt[%number]['field_mod_img_txt_title']['und'][0]['value']
- * Txt: $blockImgTxt[%number]['field_mod_img_txt_txt']['und'][0]['value']
- *
- * Footer links
- * Txt: $footerLinks[%number]['field_footer_link_txt']['und'][0]['value']
- * Url: $footerLinks[%number]['field_footer_link_url']['und'][0]['value']
- *
- * Attachments
- * Txt: $footerAttachments[%number]['field_footer_attachment_txt']['und'][0]['value']
- * Url: $footerAttachments[%number]['field_footer_attachment_att']['und'][0]['value']
- *
- * List Items
- * Title: $listItems[%number]['field_list_items_title']['und'][0]['value']
- * Description: $listItems[%number]['field_list_items_description']['und'][0]['value']
  */
+
+//Header Img
+$header_img = field_get_items('micro', $micro, 'field_header_img');
+$header_img = field_view_value('micro', $micro, 'field_header_img', $header_img[0]);
+
+
+// Header Text
+$header_txt = field_get_items('micro', $micro, 'field_header_txt');
+$header_txt = field_view_value('micro', $micro, 'field_header_txt', $header_txt[0]);
+
+//Main Description
+$info_description = field_get_items('micro', $micro, 'field_info_description');
+$info_description = field_view_value('micro', $micro, 'field_info_description', $info_description[0]);
+
+//Body Video
+$body_video = field_get_items('micro', $micro, 'field_body_video');
+$body_video = field_view_value('micro', $micro, 'field_body_video', $body_video[0]);
+
+//Body Img
+$body_img = field_get_items('micro', $micro, 'field_body_img');
+$body_img = field_view_value('micro', $micro, 'field_body_img', $body_img[0]);
+ 
+//Body quote
+$body_quote= field_get_items('micro', $micro, 'field_body_quote');
+$body_quote = field_view_value('micro', $micro, 'field_body_quote', $body_quote[0]);
+
+//Body quote author
+$body_quote_author = field_get_items('micro', $micro, 'field_body_quote_author');
+$body_quote_author = field_view_value('micro', $micro, 'field_body_quote_author', $body_quote_author[0]);
+
+//Map
+//Name: $map[%number]['name']
+//Street: $map[%number]['street']
+//Latitude: $map[%number]['latitude']
+//Longitude: $map[%number]['longitude']
+
+//Image Gallery
+//Fid: $gallery[number]['fid']
+//Filename: $gallery[number]['filename']
+//Uri: $gallery[number]['uri']
+
+// Mod Image & Text
+$mod_img_txts = field_get_items('micro', $micro, 'field_mod_img_txt');
+
+//Footer links
+$footerLinks = field_get_items('micro', $micro, 'field_footer_link');
+// Txt: $footerLinks[%number]['field_footer_link_txt']['und'][0]['value']
+// Url: $footerLinks[%number]['field_footer_link_url']['und'][0]['value']
+
+//Attachments
+$footerAttachments = field_get_items('micro', $micro, 'field_footer_attachment');
+//Txt: $footerAttachments[%number]['field_footer_attachment_txt']['und'][0]['value']
+//Url: $footerAttachments[%number]['field_footer_attachment_att']['und'][0]['value']
+ 
+//List Items
+$listItems = field_get_items('micro', $micro, 'field_list_items');
+//Title: $listItems[%number]['field_list_items_title']['und'][0]['value']
+//Description: $listItems[%number]['field_list_items_description']['und'][0]['value']
+
  ?>
 <?php if(isset($page['content']['system_main']['#id']) && $page['content']['system_main']['#id'] == 'micro-form'):?>
   <?php print render($page['content']);?>
 
 <?php else:?>
+<script>
+    function setCookieLike(mid) {
+      var old_cookie = getCookieLike('medtravel_likes');
+      var exist_cookie = exist_cookie(mid, old_cookie);
+      //if(exist_cookie == false) {
+        document.cookie="medtravel_likes="+old_cookie+";"+mid;
+      //}
+      /*var new_cookie = getCookieLike('medtravel_likes');*/
+      alert(exist_cookie);
+    }
+
+    function getCookieLike(cname) {
+        var name = cname + "=";
+        var ca = document.cookie.split(';');
+        for(var i=0; i<ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0)==' ') c = c.substring(1);
+            if (c.indexOf(name) == 0) return c.substring(name.length,c.length);
+        }
+        return "";
+    } 
+
+    function exist_cookie(mid, old_cookie) {
+      var split = old_cookie.split(";");
+      alert(split);
+      for(var i=0; i<split.length; i++) {
+            var c = split[i];
+            while (c.charAt(0)==' ') c = c.substring(1);
+            if (c.indexOf(mid) == 0) return true;
+        }
+        alert('hola');
+        return false;
+    }
+</script>
 <section id="bannerInterior">
+
       <?php if(!empty($header_img)):?>
-        <figure><img src="<?php print $header_img;?>" alt="">
+        <figure><?php print render($header_img);?>
         </figure>
       <?php endif;?>
         <article class="container">
             <?php if(!empty($header_txt)):?>
-              <h1><?php print $header_txt;?></h1>
+              <h1><?php print render($header_txt);?></h1>
             <?php endif;?>
 
         </article>
         <nav class="container" id="favoritos">
             <ul>
                 <?php if((!empty($likes)) && ($likes == 1)):?>
-                  <li><a href=""><span class="icon-heart"></span><p>(12)</p></a>
+                  <li><a href="" onClick="setCookieLike(<?php print $mid;?>)"><span class="icon-heart"></span><p>(12)</p></a>
                   </li>
                 <?php endif;?>
                 <?php if((!empty($social_tw)) && ($social_tw == 1)):?>
@@ -106,7 +152,8 @@ $theme_path = drupal_get_path('theme', 'medtravel') . '/';
                   </li>
                 <?php endif;?>
                 <?php if((!empty($share)) && ($share == 1)):?>
-                  <li><a href=""><span class="icon-compartir-icon"></span></a>
+                  <li><?php print render($page['share_this']);?>
+                  <!--<a href=""><span class="icon-compartir-icon"></span></a>-->
                   </li>
                 <?php endif;?>
             </ul>
@@ -132,31 +179,33 @@ $theme_path = drupal_get_path('theme', 'medtravel') . '/';
 
         <?php if(!empty($info_description)):?>
           <article>
-              <p><?php print $info_description;?></p>
+              <!-- for ckeditor includes a <p> tag already-->
+              <?php print render($info_description);?>
           </article>
         <?php endif;?>
 
-        <?php if(!empty($blockImgTxt)):?>
+        <?php if(!empty($mod_img_txts)):?>
           <?php $counter = 0;?>
-          <?php foreach($blockImgTxt as $block):?>
+          <?php foreach($mod_img_txts as $mod_img_txt):?>
             <?php 
-              $title = $block['field_mod_img_txt_title']['und'][0]['safe_value'];
-              $txt = $block['field_mod_img_txt_txt']['und'][0]['safe_value'];
-              $image = file_create_url($block['field_mod_img_txt_img']['und'][0]['uri']);
+              $title = $mod_img_txt['field_mod_img_txt_title']['und'][0]['safe_value'];
+              $txt = $mod_img_txt['field_mod_img_txt_txt']['und'][0]['safe_value'];
+              $image = file_create_url($mod_img_txt['field_mod_img_txt_img']['und'][0]['uri']);
               $class = ($counter % 2 == 0) ? "mod-img-txt-right" : "mod-img-txt-left";
             ?>
             <article class="textoImagen <?php print $class;?>">
                 <figure><img src="<?php print $image;?>" alt="">
                 </figure>
                 <h3><?php print $title;?></h3>
-                <p><?php print $txt;?></p>
+                <!-- for ckeditor includes a <p> tag already-->
+                <?php print $txt;?>
             </article>
             <?php $counter++;?>
           <?php endforeach;?>
         <?php endif;?>
 
           <article id="infoEvento">
-              <figure><img src="<?php print $body_img;?>" alt="">
+              <figure><?php print render($body_img);?>
               </figure>
               <?php if(!empty($listItems)):?>
                 <aside>
@@ -179,17 +228,17 @@ $theme_path = drupal_get_path('theme', 'medtravel') . '/';
         <?php if(!empty($body_video) || !empty($body_quote) || !empty($body_quote_author)):?>
           <article class="video">
           <?php if(!empty($body_video)):?>
-            <iframe width="100%" height="768" src="<?php print $body_video;?>" frameborder="0" allowfullscreen></iframe>
+            <iframe width="100%" height="768" src="<?php print render($body_video);?>" frameborder="0" allowfullscreen></iframe>
           <?php endif;?>
               <?php if(!empty($body_quote) || !empty($body_quote_author)):?>
                 <aside>
                     <p>
                       <?php if(!empty($body_quote)):?>
-                        <strong>"<?php print $body_quote;?>"</strong>
+                        <strong>"<?php print render($body_quote);?>"</strong>
                         <br>
                       <?php endif;?>
                       <?php if(!empty($body_quote_author)):?>
-                          <br> <?php print $body_quote_author;?>
+                          <br> <?php print render($body_quote_author);?>
                       <?php endif;?>
                     </p>
                 </aside>

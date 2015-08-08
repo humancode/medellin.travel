@@ -40,6 +40,7 @@
  *
  * @ingroup themeable
  */
+$base_path = base_path();
 ?>
  <section id="bannerInterior">
 
@@ -56,33 +57,79 @@
     <section class="wrapper2 row" id="interna1">
         <div class="col-md-3"></div>
         <article class="col-md-9">
-            <p><?php print $term_description;?></p>
+            <p><?php print render($term_description);?></p>
         </article>
         <nav id="menuLateral" class="col-md-3">
             <ul>
                 <?php foreach($items_menu as $item_menu):?>
-                    <li><a href="micro/<?php print $item_menu['tid'];?>"><?php print $item_menu['name'];?> </a><span>(<?php print $item_menu['number_items'];?>)</span>
+                    <li>
+                        <a href="<?php print $item_menu['tid'];?>"><?php print $item_menu['name'];?> </a><span>(<?php print $item_menu['number_items'];?>)</span>
                     </li>
                 <?php endforeach;?>
             </ul>
         </nav>
 
-        <?php foreach($micros as $micro):?>
-            <?php $micro_src = file_load($micro->field_res_img_fid);?>
-            <?php $micro_img = file_create_url($micro_src->uri);?>
+        <?php foreach($micros['micro'] as $micro):?>
+            <?php 
+                $entity = entity_load('micro', array($micro->mid));
+                $entity = $entity[$micro->mid];
+                //Img
+                $img = field_get_items('micro', $entity, 'field_res_img');
+                $img = field_view_value('micro', $entity, 'field_res_img', $img[0]);
+                // remove height and width to render for bootstrap
+                $img['#item']['height'] = '';
+                $img['#item']['width'] = '';
 
+                // Title
+                $title = field_get_items('micro', $entity, 'field_res_title');
+                $title = field_view_value('micro', $entity, 'field_res_title', $title[0]);
+                // Text
+                $description = field_get_items('micro', $entity, 'field_res_description');
+                $description = field_view_value('micro', $entity, 'field_res_description', $description[0]);
+            ?>
                 <article class="col-md-3 col-sm-6">
                     <div>
-                        <figure><img src="<?php print $micro_img;?>" alt="Vida Botero Medellín Travel">
-                            <h3 id="linea"><?php print $micro->field_res_title_value;?></h3>
+                        <figure><?php print render($img);?>
+                            <h3 id="linea"><?php print render($title);?></h3>
                             <figcaption>
                                 <p>
-                                    <?php print $micro->field_res_description_value;?>
+                                    <?php print render($description);?>
                                 </p>
-                                <a href="micro/<?php print $micro->mid;?>">Ver más</a>
+                                <a href="<?php print $base_path;?>micro/<?php print $micro->mid;?>">Ver más</a>
                             </figcaption>
                         </figure>
                     </div>
                 </article>
         <?php endforeach;?>
+        <?php if(isset($children)):?>
+            <?php foreach($children as $child):?>
+                <?php
+                    // load term
+                    $term = taxonomy_term_load($child->tid);
+                    // Image
+                    $img = field_get_items('taxonomy_term', $term, 'field_taxonomy_image_mini');
+                    $img = field_view_value('taxonomy_term', $term, 'field_taxonomy_image_mini', $img[0]);
+                    // remove height and width to render for bootstrap
+                    $img['#item']['height'] = '';
+                    $img['#item']['width'] = '';
+                    // Text
+                    $text = field_get_items('taxonomy_term', $term, 'description_field');
+                    $text = $text[0]['summary'];
+                ?>
+                <article class="col-md-3 col-sm-6">
+                    <div>
+                        <figure><?php print render($img);?>
+                            <h3 id="linea"><?php print $child->name;?></h3>
+                            <figcaption>
+                                <p>
+                                    <?php print render($text);?>
+                                </p>
+                                <a href="<?php print $base_path;?>taxonomy/term/<?php print $child->tid;?>">Ver más</a>
+                            </figcaption>
+                        </figure>
+                    </div>
+                </article>
+            <?php endforeach;?>
+
+        <?php endif;?>
     </section>

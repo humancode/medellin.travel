@@ -139,6 +139,4 @@ function template_preprocess_home_footer_block(&$variables) {
   $variables['type'] = $type;
   $variables['items'] = $items;
 
-  //var_dump($variables);
-
 }

@@ -97,8 +97,6 @@ function home_menu_theme($existing, $type, $theme, $path) {
 */
 function template_preprocess_home_menu_block(&$variables) {
   $node = $variables['node'];
-  // get the current language
-  $lang = entity_language('micro', $node);
 
   $variables['tid'] = $node->tid;
   $variables['name'] = $node->name;

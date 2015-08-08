@@ -48,7 +48,16 @@ function field_cats_field_is_empty($item, $field) {
 function field_cats_field_widget_info() {
   return array(
     'field_cats_widget' => array(
-      'label' => t('Select Widget'),
+      'label' => t('Micros'),
+      'description' => t('Select with all micros'),
+      'field types' => array('categories'),
+      'behaviors' => array(
+        'multiple values' => FIELD_BEHAVIOR_DEFAULT,
+        'default value' => FIELD_BEHAVIOR_DEFAULT,
+      ),
+    ),
+    'field_cats_widget_all_cats' => array(
+      'label' => t('Categorías'),
       'description' => t('Select with all categories'),
       'field types' => array('categories'),
       'behaviors' => array(
@@ -76,10 +85,42 @@ function field_cats_field_widget_form(&$form, &$form_state, $field, $instance, $
       $element['tid'] = array(
         '#type' => 'select',
         '#title' => t('Página'),
-        '#default_value' => isset($items[$delta]['cat']) ? $items[$delta]['units'] : NULL,
+        '#default_value' => t('Seleccione una página'),
         '#options' => $options,
       );
   }
+
+  if($instance['widget']['type'] == 'field_cats_widget_all_cats') { 
+    
+      // get category options
+      $categories = category_list();
+      $options = array();
+
+      // builds the options
+      foreach($categories as $category) {
+        $children = taxonomy_get_children($category->tid);
+        if($children || $category->parent == 0) {
+          
+          if($children) {
+            foreach($children as $child) {
+              $options[$category->name][$child->tid] = $child->name;
+            }
+          }
+          else {
+            $options[$category->name] = array($category->tid => $category->name);
+          }
+        }
+      }
+      
+
+      $element['tid'] = array(
+        '#type' => 'select',
+        '#title' => t('Página'),
+        '#default_value' => t('Seleccione una página'),
+        '#options' => $options,
+      );
+  }
+
   return $element;
 }
 

@@ -1,5 +1,3 @@
-<?php //var_dump($lugares);?>
-<?php print render($page['content']);?>
 <section id="video">
          <video autoplay loop muted poster="<?php print $home_video_img;?>" id="bgvid">
             <!--<source src="video/bureau.mp4" type="video/mp4"/>
@@ -49,13 +47,13 @@ document.addEventListener('touchstart', function(event) {
                         </article>
                     <?php endif;?>
                     
-                    <?php if($home_donde_quedarme == 1):?>
+                    <?php if($home_como_moverme == 1):?>
                         <li id="transporte" class="col-md-4 col-sm-4 col-xs-4"><a href="javascript:;">Cómo moverme</a>
                         </li>
                         <article>
                             <ul class="transporte">
                                 <?php foreach($transporte as $mid => $nombre):?>
-                                    <li><a href="<?php print $mid;?>"><?php print $nombre;?></a>
+                                    <li><?php print l($nombre, './micro/'.$mid);?>"><?php print $nombre;?>
                                     </li>
                                 <?php endforeach;?>
                             </ul>
@@ -71,9 +69,9 @@ document.addEventListener('touchstart', function(event) {
     </div>
     <section id="temporada">
         <article>
-            <a href=""><h2>Evento de la temporada</h2></a>
+            <!--<a href=""><h2>Evento de la temporada</h2></a>
             <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Est eaque eveniet perspiciatis at aspernatur dolore quibusdam, iure recusandae atque quos labore! Accusantium cum vero tenetur, tempora quod aliquam optio quaerat?</p>
-            <a class="btnBlanco" href="">Ver más</a>
+            <a class="btnBlanco" href="">Ver más</a>-->
         </article>
     </section>
     <section id="instagramFeed">

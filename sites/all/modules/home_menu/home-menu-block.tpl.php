@@ -1,4 +1,5 @@
 <?php 
+  $base_path = base_path();
   $children = taxonomy_get_children($tid);
   if($cols == '2-columnas') {
     $cols_class = 'col-md-6';
@@ -6,15 +7,27 @@
   if($cols == '3-columnas') {
     $cols_class = 'col-md-4';
   }
+  //get data
+  $data = get_home_data();
+  $data = $data[0];
+  //get language
+  global $language;
+  $langcode = $language->language;
+  if($langcode == 'es') {
+    $langcode = '';
+  }
+  if($langcode == 'en') {
+    $langcode = '_en';
+  }
 ?>
 <?php //var_dump(count($children));?>
 <?php if($cols == '0-columnas'):?>
 <li class="mainMenu">
-  <a class="" href="javascript:;"><?php print $name;?> </a>
+  <?php print l($name,'./taxonomy/term/'. $tid);?>
 </li>
 <?php else:?>
 <li class="mainMenu">
-  <a class="" href="javascript:;"><?php print $name;?> <span class="icon-icon-flecha-abajo"></span></a>
+  <?php print l($name,'./taxonomy/term/'. $tid);?> <span class="icon-icon-flecha-abajo"></span></a>
 </li>
 <?php endif;?>
 
@@ -41,14 +54,14 @@
                   <?php if(!empty($has_children)):?>
                       <?php foreach($has_children as $item):?>
                         <li>
-                          <a href="taxonomy/term/<?php print $item->tid;?>"><?php print $item->name;?></a>
+                          <?php print l($item->name,'./taxonomy/term/'. $item->tid);?>
                         </li>
                       <?php endforeach;?>
                   <?php else:?>
                     <?php $micros = query_all_micros($child->tid);?>
                     <?php foreach($micros as $micro):?>
                       <li>
-                        <a href="micro/<?php print $micro->mid;?>"><?php print $micro->name;?></a>
+                        <?php print l($micro->name,'./taxonomy/term/'. $micro->mid);?>
                       </li>
                     <?php endforeach;?>
                     </ul>
@@ -59,7 +72,7 @@
                     <ul class="<?php print $cols_class;?>">
                   <?php endif;?>
                   <li>
-                    <a href="taxonomy/term/<?php print $child->tid;?>"><?php print $child->name;?></a>
+                    <?php print l($child->name,'./taxonomy/term/'. $child->tid);?>
                   </li>
                   <?php $cont++;?>
                   <?php if($cont == 3):?>
@@ -75,8 +88,8 @@
 
           <?php if($cols == '2-columnas'):?>
             <?php 
-              if(isset($img_menu)) {
-                $img_menu = file_load(variable_get('home_menu_recommended_image_one'));
+              if(isset($data['home_recommended_image_one'])) {
+                $img_menu = file_load($data['home_recommended_image_one']);
                 $img_recommended = file_create_url($img_menu->uri);
               }
             ?>
@@ -86,8 +99,8 @@
                       <img src="<?php print $img_recommended;?>" alt="">
                     <?php endif;?>
                     <figcaption>
-                        <h4><?php print variable_get('home_menu_recommended_title_one');?></h4>
-                        <p><?php print variable_get('home_menu_recommended_description_one');?></p>
+                        <h4><?php print $data['home_recommended_title_one'.$langcode];?></h4>
+                        <p><?php print $data['home_recommended_description_one'.$langcode];?></p>
                     </figcaption>
                 </figure>
             </article>
@@ -95,8 +108,8 @@
 
           <?php if($cols == '3-columnas'):?>
             <?php 
-              if(isset($img_menu)) {
-                $img_menu = file_load(variable_get('home_menu_recommended_image_two'));
+              if(isset($data['home_recommended_image_two'])) {
+                $img_menu = file_load($data['home_recommended_image_two']);
                 $img_recommended = file_create_url($img_menu->uri);
               }
             ?>
@@ -106,8 +119,8 @@
                       <img src="<?php print $img_recommended;?>" alt="">
                     <?php endif;?>
                     <figcaption>
-                        <h4><?php print variable_get('home_menu_recommended_title_two');?></h4>
-                        <p><?php print variable_get('home_menu_recommended_description_two');?></p>
+                        <h4><?php print $data['home_recommended_title_two'.$langcode];?></h4>
+                        <p><?php print $data['home_recommended_description_two'.$langcode];?></p>
                     </figcaption>
                 </figure>
             </article>

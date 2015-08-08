@@ -1,29 +1,16 @@
 <?php
 
 function query_entities() {
+  $current_mid = arg(1);
+  $current_mid = (int)$current_mid;
+
   $query = db_select('micro', 'm')
   ->fields('m', array('mid', 'name', 'category'))
+  ->condition('mid', $current_mid, '<>')
   ->addTag('node_access')
   ->execute();
   return $query;
 }
-
-function query_entity($mid) {
-  $query = db_select('micro', 'm');
-  $query->join('field_data_field_res_img', 'i', 'm.mid = i.entity_id');
-  $query->join('field_data_field_res_title', 't', 'm.mid = t.entity_id');
-  $query->join('field_data_field_res_description', 'd', 'm.mid = d.entity_id');
-  $result = $query
-  ->fields('m', array('mid'))
-  ->fields('i', array('field_res_img_fid'))
-  ->fields('t', array('field_res_title_value'))
-  ->fields('d', array('field_res_description_value'))
-  ->condition('mid', $mid)
-  ->addTag('node_access')
-  ->execute();
-  return $result;
-}
-
 
  function random_entities() {
  	$data = array();
@@ -81,21 +68,21 @@ function related_block_view($delta = '') {
     	$entities = random_entities();
 
     	foreach($entities as $entity) {
-    	  $values = query_entity($entity['mid']);
+    	  $values = entity_load('micro', array($entity['mid']));
 
     	  foreach($values as $value) {
 	      	$items[] = array(
-				'data' => array(
-					'#node' => $value,
-					'#theme' => 'related_block_item',
-				),
-			);
+    				'data' => array(
+      					'#node' => $value,
+      					'#theme' => 'related_block_item',
+      			),
+  			 );
 	      }
-        }
+      }
         
-        if (!empty($items)) {
-			$block['content'] = $items;
-		}
+      if (!empty($items)) {
+			 $block['content'] = $items;
+		  }
     }
   }
   return $block;
@@ -121,12 +108,24 @@ function related_theme($existing, $type, $theme, $path) {
 function template_preprocess_related_block_item(&$variables) {
 	$node = $variables['node'];
 
-	$img_obj = file_load($node->field_res_img_fid);
-	$img = file_create_url($img_obj->uri);
+  // Image
+	$img = field_get_items('micro', $node, 'field_res_img');
+  $img = field_view_value('micro', $node, 'field_res_img', $img[0]);
+  // modify width and height
+  $img['#item']['height'] = '150px';
+  $img['#item']['width'] = '';
+
+  // Title
+  $title = field_get_items('micro', $node, 'field_res_title');
+  $title = field_view_value('micro', $node, 'field_res_title', $title[0]);
+
+  // Description
+  $description = field_get_items('micro', $node, 'field_res_description');
+  $description = field_view_value('micro', $node, 'field_res_description', $description[0]);
 
 	$variables['mid'] = $node->mid;
 	$variables['img'] = $img;
-	$variables['title'] = $node->field_res_title_value;
-	$variables['description'] = $node->field_res_description_value;
+	$variables['title'] = $title;
+	$variables['description'] = $description;
 
 }

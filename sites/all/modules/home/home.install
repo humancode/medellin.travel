@@ -1,0 +1,217 @@
+<?php
+/*
+ * Creates the tables through schema API
+ */
+function home_schema() {
+  $schema['home_vars'] = array (
+    'description' => 'The main store for micros',
+    'fields' => array(
+      'hid' => array(
+        'description' => 'Primary key for our table of micro sites',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'logo' => array(
+        'description' => 'Main logo',
+        'type' => 'varchar',
+        'length' => '255',
+        'not null' => TRUE
+      ),
+      'video' => array(
+        'description' => 'Header video',
+        'type' => 'varchar',
+        'length' => '255',
+        'not null' => TRUE
+      ),
+      'video_img' => array(
+        'description' => 'Video Image',
+        'type' => 'varchar',
+        'length' => '255',
+        'not null' => TRUE
+      ),
+      'title' => array(
+        'description' => 'Main title',
+        'type' => 'varchar',
+        'length' => '100',
+        'not null' => TRUE
+      ),
+      'title_en' => array(
+        'description' => 'Main title',
+        'type' => 'varchar',
+        'length' => '100',
+        'not null' => TRUE
+      ),
+      'description' => array(
+        'description' => 'Main description',
+        'type' => 'varchar',
+        'length' => '255',
+        'not null' => TRUE
+      ),
+      'description_en' => array(
+        'description' => 'Main description',
+        'type' => 'varchar',
+        'length' => '255',
+        'not null' => TRUE
+      ),
+      'home_footer' => array(
+        'description' => 'Visible footer',
+        'type' => 'int',
+        'length' => 1,
+        'not null' => TRUE
+      ),
+      'tab_que_visitar' => array(
+        'description' => 'Visible footer',
+        'type' => 'int',
+        'length' => 1,
+        'not null' => TRUE
+      ),
+      'tab_que_visitar' => array(
+        'description' => 'Visible que visitar tab',
+        'type' => 'int',
+        'length' => 1,
+        'not null' => TRUE
+      ),
+      'tab_donde_quedarme' => array(
+        'description' => 'Visible donde quedarme tab',
+        'type' => 'int',
+        'length' => 1,
+        'not null' => TRUE
+      ),
+      'tab_como_moverme' => array(
+        'description' => 'Como moverme tab',
+        'type' => 'int',
+        'length' => 1,
+        'not null' => TRUE
+      ),
+      'home_facebook' => array(
+        'type' => 'int',
+        'length' => 1,
+        'not null' => TRUE
+      ),
+      'home_facebook_link' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE
+      ),
+      'home_twitter' => array(
+        'type' => 'int',
+        'length' => 1,
+        'not null' => TRUE
+      ),
+      'home_twitter_link' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE
+      ),
+      'home_flickr' => array(
+        'type' => 'int',
+        'length' => 1,
+        'not null' => TRUE
+      ),
+      'home_flickr_link' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE
+      ),
+      'home_youtube' => array(
+        'type' => 'int',
+        'length' => 1,
+        'not null' => TRUE
+      ),
+      'home_youtube_link' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE
+      ),
+      'home_linkedin' => array(
+        'type' => 'int',
+        'length' => 1,
+        'not null' => TRUE
+      ),
+      'home_linkedin_link' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE
+      ),
+      'home_instagram' => array(
+        'type' => 'int',
+        'length' => 1,
+        'not null' => TRUE
+      ),
+      'home_instagram_link' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE
+      ),
+      'home_recommended_title_one' => array(
+        'type' => 'varchar',
+        'length' => 100,
+        'not null' => TRUE
+      ),
+      'home_recommended_title_one_en' => array(
+        'type' => 'varchar',
+        'length' => 100,
+        'not null' => TRUE
+      ),
+      'home_recommended_description_one' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE
+      ),
+      'home_recommended_description_one_en' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE
+      ),
+      'home_recommended_image_one' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE
+      ),
+      'home_recommended_title_two' => array(
+        'type' => 'varchar',
+        'length' => 100,
+        'not null' => TRUE
+      ),
+      'home_recommended_title_two_en' => array(
+        'type' => 'varchar',
+        'length' => 100,
+        'not null' => TRUE
+      ),
+      'home_recommended_description_two' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE
+      ),
+      'home_recommended_description_two_en' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE
+      ),
+      'home_recommended_image_two' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE
+      ),
+      'home_link_logo_1' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE
+      ),
+      'home_link_logo_2' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE
+      ),
+      'home_link_logo_3' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE
+      ),
+    ),
+    'primary key' => array('hid'),
+  );
+  
+  return $schema;
+}

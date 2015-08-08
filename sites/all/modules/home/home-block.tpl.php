@@ -1,11 +1,24 @@
 <section class="row menuHome">
-    <h2> <a href=""></a><?php print $title;?></h2>
+    <h2> <a href="./taxonomy/term/<?php print $category;?>"><?php print $title;?></a></h2>
+
     <?php $cont = 0;?>
-    <?php foreach($contents_node as $content):?>
+    <?php foreach($blocks as $block):?>
         <?php
-            $content_title = $content->field_bloque_home_mf_field_bloque_home_txt_value;
-            $content_fid = file_load($content->field_bloque_home_mf_field_bloque_home_img_fid);
-            $content_img = file_create_url($content_fid->uri);
+            // get vars
+            $tid = $block['field_bloque_home_tid']['und'][0]['tid'];
+            $txt = $block['field_bloque_home_txt']['und'][0]['safe_value'];
+            $img_src = file_load($block['field_bloque_home_img']['und'][0]['fid']);
+            $img = image_load($img_src->uri);
+            $img_render = array(
+              'file' => array(
+                '#theme' => 'image_style',
+                '#style_name' => 'large',
+                '#path' => $img->source,
+                '#width' => $image->info['width'],
+                '#height' => $image->info['height'],
+              ),
+            );
+
             $class = '';
 
             switch($contents_num) {
@@ -20,19 +33,22 @@
                     break;
             }
         ?>
+
         <?php if($cont == 0):?>
             <article class="<?php print $class;?>">
         <?php else:?>
             <article class="col-md-4 col-sm-4">
         <?php endif;?>
+
             <div class="bg"></div>
-            <a href="javascript:;">
-                <h3 id="linea"><?php print $content_title;?></h3>
-                <figure><img src="<?php print $content_img;?>" alt="Vida Botero Medellín Travel">
+            <a href="<?php print $tid;?>">
+                <h3 id="linea"><?php print $txt;?></h3>
+                <figure><?php print render($img_render);?>
                 </figure>
             </a>
-
         </article>
         <?php $cont++;?>
+
     <?php endforeach;?>
+
 </section>
