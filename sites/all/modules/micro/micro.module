@@ -128,16 +128,32 @@ function micro_form($form, &$form_state, $micro = NULL) {
         '#value' => $langcode,
       ); 
 
+    $form['fst_links_attachments'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Título para enlaces y documentos adjuntos')
+
+    );
+    $form['fst_links_attachments']['title_links'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Títlo para enlaces'),
+      '#default_value' => $micro->title_links,
+    );
+    $form['fst_links_attachments']['title_attachments'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Títlo para archivos adjuntos'),
+      '#default_value' => $micro->title_links,
+    );
+
     
     field_attach_form('micro', $micro, $form, $form_state, $langcode);
     
-    $form['actions'] = [
+    $form['actions'] = array(
         '#type' => 'actions',
-        'submit' => [
+        'submit' => array(
             '#type' => 'submit',
             '#value' => isset($crpc->mid) ? t('Update') : t('Save'),
-        ]
-    ];     
+        )
+    );     
 
     return $form;
 }
@@ -212,7 +228,42 @@ function micro_menu(){
     'access arguments' => array('view micro'),
     'type' => MENU_CALLBACK,
   );
+
+  $items['ajax-like/%'] = array(
+    'page callback' => 'ajax_like_add', // Render HTML
+    'page arguments' => array(1),
+    'type' => MENU_CALLBACK,
+    'access arguments' => array('access content'),
+    'delivery callback' => 'load_ajax_callback',  // Magic goes here
+  );
+
   return $items;
+}
+
+// function for add likes via ajax
+function ajax_like_add($mid) {
+  // updates num likes + 1
+  db_update('micro')
+    ->expression('num_likes', 'num_likes + 1')
+    ->condition('mid', $mid)
+    ->execute();
+
+  // takes num likes from an mid
+  $query = db_select('micro', 'm')
+    ->fields('m', array('num_likes'))
+    ->condition('mid', $mid)
+    ->addTag('node_access')
+    ->execute()
+    ->fetchAll(PDO::FETCH_ASSOC);
+
+  // get the value
+  $num_likes = $query[0]['num_likes'];
+
+  return $num_likes;
+}
+
+function load_ajax_callback($likes) {
+  print '('.$likes.')';
 }
 
 function micro_page_view($micro, $view_mode = 'full') {

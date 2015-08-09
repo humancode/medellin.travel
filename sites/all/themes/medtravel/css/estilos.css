@@ -1574,3 +1574,37 @@ a:visited {
 #main-page {
     margin-top:100px;
 }
+
+.icon-heart {
+    cursor: pointer;
+}
+
+.st_twitter_custom:before {
+    font-family: "icomoon";
+    content: "\ea93";
+}
+#favoritos ul li .st_twitter_custom {
+    color: #6aa8d9;
+    padding-right:15px;
+    cursor:pointer;
+}
+
+.st_facebook_custom:before {
+    font-family: "icomoon";
+    content: "\ea8e";
+}
+#favoritos ul li .st_facebook_custom {
+    color: #1f3162;
+    padding-right:15px;
+    cursor:pointer;
+}
+
+.st_sharethis_custom:before {
+    font-family: "icomoon";
+    content: "\e604";
+}
+#favoritos ul li .st_sharethis_custom {
+    color: red;
+    padding-right:15px;
+    cursor:pointer;
+}

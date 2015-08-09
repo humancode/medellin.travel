@@ -92,38 +92,51 @@ $listItems = field_get_items('micro', $micro, 'field_list_items');
 
 <?php else:?>
 <script>
-    function setCookieLike(mid) {
-      var old_cookie = getCookieLike('medtravel_likes');
-      var exist_cookie = exist_cookie(mid, old_cookie);
-      //if(exist_cookie == false) {
-        document.cookie="medtravel_likes="+old_cookie+";"+mid;
-      //}
-      /*var new_cookie = getCookieLike('medtravel_likes');*/
-      alert(exist_cookie);
+  function handleCookie(mid) {
+    cookie = getCookie('medtravel_likes');
+    if(cookie != null) {
+      exist = analizeCookie(cookie, mid);
+      if(exist) {
+        alert('Ya te gusta esta paǵina');
+      }
+      else {
+        new_cookie = cookie+'-'+mid;
+        document.cookie = "medtravel_likes="+new_cookie;
+        addLike(mid);
+      }
     }
-
-    function getCookieLike(cname) {
-        var name = cname + "=";
-        var ca = document.cookie.split(';');
-        for(var i=0; i<ca.length; i++) {
-            var c = ca[i];
-            while (c.charAt(0)==' ') c = c.substring(1);
-            if (c.indexOf(name) == 0) return c.substring(name.length,c.length);
-        }
-        return "";
-    } 
-
-    function exist_cookie(mid, old_cookie) {
-      var split = old_cookie.split(";");
-      alert(split);
-      for(var i=0; i<split.length; i++) {
-            var c = split[i];
-            while (c.charAt(0)==' ') c = c.substring(1);
-            if (c.indexOf(mid) == 0) return true;
-        }
-        alert('hola');
-        return false;
+    else {
+      alert('Te gusta esta página!');
+      document.cookie = "medtravel_likes="+mid;
+      addLike(mid);
     }
+  }
+
+  function getCookie(cname) {
+    var name = cname + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0; i<ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') c = c.substring(1);
+        if (c.indexOf(name) == 0) return c.substring(name.length,c.length);
+    }
+    return null;
+  } 
+
+  function analizeCookie(cookie, mid) {
+    var name = cookie;
+    var ca = name.split('-');
+    for(var i=0; i<ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') c = c.substring(1);
+        if (c.indexOf(mid) == 0) return true;
+    }
+    return false;
+  }
+
+  function addLike(mid) {
+    jQuery("#like-load").load("/med/ajax-like/"+mid);
+  }
 </script>
 <section id="bannerInterior">
 
@@ -140,22 +153,27 @@ $listItems = field_get_items('micro', $micro, 'field_list_items');
         <nav class="container" id="favoritos">
             <ul>
                 <?php if((!empty($likes)) && ($likes == 1)):?>
-                  <li><a href="" onClick="setCookieLike(<?php print $mid;?>)"><span class="icon-heart"></span><p>(12)</p></a>
+                  <li><a nohref onClick="handleCookie(<?php print $mid;?>)"><span class="icon-heart"></span></a>
+                    <p id="like-load">(<?php print $num_likes;?>)</p>
                   </li>
                 <?php endif;?>
-                <?php if((!empty($social_tw)) && ($social_tw == 1)):?>
+
+                <?php if( (!empty($social_tw) && $social_tw == 1) || (!empty($social_fb) && $social_fb == 1) || (!empty($share) && $share == 1)):?>
+                  <li><?php print render($page['share_this']);?></li>
+                <?php endif;?>
+                <!--<?php //if((!empty($social_tw)) && ($social_tw == 1)):?>
                   <li><a href=""><span class="icon-twitter3"></span></a>
                   </li>
-                <?php endif;?>
-                <?php if((!empty($social_fb)) && ($social_fb == 1)):?>
+                <?php //endif;?>
+                <?php //if((!empty($social_fb)) && ($social_fb == 1)):?>
                   <li><a href=""><span class="icon-facebook3"></span></a>
                   </li>
-                <?php endif;?>
-                <?php if((!empty($share)) && ($share == 1)):?>
-                  <li><?php print render($page['share_this']);?>
-                  <!--<a href=""><span class="icon-compartir-icon"></span></a>-->
+                <?php //endif;?>
+                <?php //if((!empty($share)) && ($share == 1)):?>
+                  <li><?php //print render($page['share_this']);?>
+
                   </li>
-                <?php endif;?>
+                <?php //endif;?>-->
             </ul>
 
               <ul>
@@ -305,6 +323,7 @@ $listItems = field_get_items('micro', $micro, 'field_list_items');
 
           <?php if(!empty($footerLinks) || !empty($footerAttachments)):?>
            <article id="moduloEnlases">
+            <p><?php print $title_links;?></p>
                 <?php if(!empty($footerLinks)):?>
                    <ul>
                        <?php foreach($footerLinks as $link):?> 
@@ -318,6 +337,7 @@ $listItems = field_get_items('micro', $micro, 'field_list_items');
                 <?php endif;?>
                
                <?php if(!empty($footerAttachments)):?>
+                  <p><?php print $title_attachments;?></p>
                    <ul id="descargas">
                    <?php foreach($footerAttachments as $attachment):?> 
                       <?php 

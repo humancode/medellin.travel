@@ -44,8 +44,6 @@
  */
 
 // path vars
-
-
 ?>
 <!DOCTYPE html>
 
@@ -56,10 +54,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <title>Medellín Travel</title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <meta name="description" content="DESCRIPCIÓN DEL EVENTO">
-    <meta property="og:site_name" content="CONTENIDO TITULO FACEBOOK">
-    <meta property="og:description" content="DESCRIPCIÓN FACEBOOK DEL EVENTO">
-    <meta property="og:image" content="images/compartir-facebook-carretica-y-show-pilsen.jpg">
+    <meta name="description" content="Medellín.travel">
+
+    <?php if(isset($og_title)):?>
+      <meta property="og:site_name" content="<?php print $og_title;?>">
+    <?php else:?>
+      <meta property="og:site_name" content="Medellín Travel">
+    <?php endif;?>
+
+    <?php if(isset($og_description)):?>
+      <meta property="og:description" content="<?php print $og_description;?>">
+    <?php else:?>
+      <meta property="og:description" content="Medellín Travel Descripción">
+    <?php endif;?>
+
+    <?php if(isset($og_img)):?>
+      <meta property="og:image" content="<?php print $og_img;?>">
+    <?php else:?>
+      <meta property="og:image" content="../images/compartir-facebook-carretica-y-show-pilsen.jpg">
+    <?php endif;?>
 
   <title><?php print $head_title; ?></title>
   <?php print $styles; ?>
