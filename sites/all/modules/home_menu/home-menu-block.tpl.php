@@ -20,14 +20,17 @@
     $langcode = '_en';
   }
 ?>
-<?php //var_dump(count($children));?>
 <?php if($cols == '0-columnas'):?>
 <li class="mainMenu">
-  <?php print l($name,'./taxonomy/term/'. $tid);?>
+  <?php //print l($name,'./taxonomy/term/'. $tid);?>
 </li>
 <?php else:?>
 <li class="mainMenu">
-  <?php print l($name,'./taxonomy/term/'. $tid);?> <span class="icon-icon-flecha-abajo"></span></a>
+  <?php if($name != 'Planéate en Medellín'):?>
+    <?php print l($name,'./taxonomy/term/'. $tid);?> <span class="icon-icon-flecha-abajo"></span></a>
+  <?php else:?>
+    <a nohref><?php print $name;?></a><span class="icon-icon-flecha-abajo"></span></a>
+  <?php endif;?>
 </li>
 <?php endif;?>
 
@@ -61,7 +64,7 @@
                     <?php $micros = query_all_micros($child->tid);?>
                     <?php foreach($micros as $micro):?>
                       <li>
-                        <?php print l($micro->name,'./taxonomy/term/'. $micro->mid);?>
+                        <?php print l($micro->name,'./micro/'. $micro->mid);?>
                       </li>
                     <?php endforeach;?>
                     </ul>
@@ -90,7 +93,9 @@
             <?php 
               if(isset($data['home_recommended_image_one'])) {
                 $img_menu = file_load($data['home_recommended_image_one']);
-                $img_recommended = file_create_url($img_menu->uri);
+                if($img_menu != false) {
+                  $img_recommended = file_create_url($img_menu->uri);
+                } 
               }
             ?>
             <article class="col-md-4 recomendado">
@@ -110,7 +115,9 @@
             <?php 
               if(isset($data['home_recommended_image_two'])) {
                 $img_menu = file_load($data['home_recommended_image_two']);
-                $img_recommended = file_create_url($img_menu->uri);
+                if($img_menu != false) {
+                  $img_recommended = file_create_url($img_menu->uri);
+                }
               }
             ?>
             <article class="col-md-4 recomendado">

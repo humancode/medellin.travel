@@ -1,3 +1,5 @@
+<?php if(!empty($title)):?>
+  
 <section class="row menuHome">
     <h2> <a href="./taxonomy/term/<?php print $category;?>"><?php print $title;?></a></h2>
 
@@ -8,16 +10,18 @@
             $tid = $block['field_bloque_home_tid']['und'][0]['tid'];
             $txt = $block['field_bloque_home_txt']['und'][0]['safe_value'];
             $img_src = file_load($block['field_bloque_home_img']['und'][0]['fid']);
-            $img = image_load($img_src->uri);
-            $img_render = array(
-              'file' => array(
-                '#theme' => 'image_style',
-                '#style_name' => 'large',
-                '#path' => $img->source,
-                '#width' => $image->info['width'],
-                '#height' => $image->info['height'],
-              ),
-            );
+            if($img_src) {
+                $img = image_load($img_src->uri);
+                $img_render = array(
+                  'file' => array(
+                    '#theme' => 'image_style',
+                    '#style_name' => 'large',
+                    '#path' => $img->source,
+                    '#width' => $img->info['width'],
+                    '#height' => $img->info['height'],
+                  ),
+                );
+            }
 
             $class = '';
 
@@ -41,7 +45,7 @@
         <?php endif;?>
 
             <div class="bg"></div>
-            <a href="<?php print $tid;?>">
+            <a href="micro/<?php print $tid;?>">
                 <h3 id="linea"><?php print $txt;?></h3>
                 <figure><?php print render($img_render);?>
                 </figure>
@@ -52,3 +56,5 @@
     <?php endforeach;?>
 
 </section>
+
+<?php endif;?>

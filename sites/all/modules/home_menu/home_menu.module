@@ -58,13 +58,14 @@ function home_menu_block_view($delta = '') {
     $items = array();
 
     if (user_access('access content')) {
-      $result = query_category_parents();
+      $result = taxonomy_get_tree(2,0,1);
       $items = array();
 
       foreach ($result as $node) {
+        $term = taxonomy_term_load($node->tid);
         $items[] = array(
           'data' => array(
-            '#node' => $node,
+            '#node' => $term,
             '#theme' => 'home_menu_block',
           ),
         );
@@ -98,7 +99,8 @@ function home_menu_theme($existing, $type, $theme, $path) {
 function template_preprocess_home_menu_block(&$variables) {
   $node = $variables['node'];
 
+
   $variables['tid'] = $node->tid;
   $variables['name'] = $node->name;
-  $variables['cols'] = $node->field_taxonomy_class_value;
+  $variables['cols'] = $node->field_taxonomy_class['und'][0]['value'];
 }

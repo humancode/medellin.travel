@@ -307,11 +307,15 @@ function home_form($form, &$form_state) {
   $form['recommended']['one']['description_one'] = array(
     '#type' => 'textfield',
     '#title' => t('Descripción'),
+    '#description' => t('Máximo 90 caracteres.'),
+    '#maxlength' => 90, 
     '#default_value' => $data['home_recommended_description_one'],
   );
   $form['recommended']['one']['description_one_en'] = array(
     '#type' => 'textfield',
     '#title' => t('Descripción (Inglés)'),
+    '#description' => t('Máximo 90 caracteres.'),
+    '#maxlength' => 90, 
     '#default_value' => $data['home_recommended_description_one_en'],
   );
   $form['recommended']['one']['image_one'] = array(
@@ -344,11 +348,15 @@ function home_form($form, &$form_state) {
   $form['recommended']['two']['description_two'] = array(
     '#type' => 'textfield',
     '#title' => t('Descripción'),
+    '#description' => t('Máximo 90 caracteres.'),
+    '#maxlength' => 90, 
     '#default_value' => $data['home_recommended_description_two'],
   );
   $form['recommended']['two']['description_two_en'] = array(
     '#type' => 'textfield',
     '#title' => t('Descripción (Inglés)'),
+    '#description' => t('Máximo 90 caracteres.'),
+    '#maxlength' => 90, 
     '#default_value' => $data['home_recommended_description_two_en'],
   );
   $form['recommended']['two']['image_two'] = array(
@@ -394,7 +402,7 @@ function home_form($form, &$form_state) {
 
 function home_form_validate($form, &$form_state) {
   $socials = array (
-    'facebook' =>$form_state['values']['home_facebook'],
+    'facebook' => $form_state['values']['home_facebook'],
     'twitter' => $form_state['values']['home_twitter'],
     'flickr' => $form_state['values']['home_flickr'],
     'youtube' => $form_state['values']['home_youtube'],
@@ -409,6 +417,40 @@ function home_form_validate($form, &$form_state) {
       }
     }
   }
+
+  // change to permanent status
+  global $user;
+  $account = $user;
+
+  // logo
+  $file = file_load($form_state['values']['home_logo']);
+  $file->status = FILE_STATUS_PERMANENT;
+  file_save($file);
+  file_usage_add($file, 'user', 'user', $account->uid);  
+
+  // video
+  $file = file_load($form_state['values']['home_video']);
+  $file->status = FILE_STATUS_PERMANENT;
+  file_save($file);
+  file_usage_add($file, 'user', 'user', $account->uid);  
+
+  // video img
+  $file = file_load($form_state['values']['home_video_img']);
+  $file->status = FILE_STATUS_PERMANENT;
+  file_save($file);
+  file_usage_add($file, 'user', 'user', $account->uid); 
+
+  // image_one
+  $file = file_load($form_state['values']['image_one']);
+  $file->status = FILE_STATUS_PERMANENT;
+  file_save($file);
+  file_usage_add($file, 'user', 'user', $account->uid); 
+
+  // video
+  $file = file_load($form_state['values']['image_two']);
+  $file->status = FILE_STATUS_PERMANENT;
+  file_save($file);
+  file_usage_add($file, 'user', 'user', $account->uid); 
 }
 /*
 * Submit handler
@@ -676,14 +718,22 @@ function home_theme($existing, $type, $theme, $path) {
 * Preprocesses home block.
 */
 function template_preprocess_home_block(&$variables) {
-  $contents = $variables['contents_node'];
+  // get language
+  global $language;
+  $langcode = $language->language;
 
-  $variables['title'] = $contents->title;
-  $variables['blocks'] = field_get_items('node', $contents, 'field_bloque_home_mf');
-  $variables['category'] = $contents->field_home_block_category['und'][0]['tid'];
-  $variables['contents_num'] = count($variables['blocks']);
+  if($variables['contents_node']->language == $langcode) {
+    $contents = $variables['contents_node'];
 
-  $variables['home_link_logo_1'] = field_get_items('node', $contents, 'home_link_logo_1');
-  $variables['home_link_logo_2'] = field_get_items('node', $contents, 'home_link_logo_2');
-  $variables['home_link_logo_3'] = field_get_items('node', $contents, 'home_link_logo_3');
+    $title = field_get_items('node', $contents, 'title_field');
+    $title = field_view_value('node', $contents, 'title_field', $title[0]);
+    $variables['title'] = $title['#markup'];
+    $variables['blocks'] = field_get_items('node', $contents, 'field_bloque_home_mf');
+    $variables['category'] = $contents->field_home_block_category['und'][0]['tid'];
+    $variables['contents_num'] = count($variables['blocks']);
+
+    $variables['home_link_logo_1'] = field_get_items('node', $contents, 'home_link_logo_1');
+    $variables['home_link_logo_2'] = field_get_items('node', $contents, 'home_link_logo_2');
+    $variables['home_link_logo_3'] = field_get_items('node', $contents, 'home_link_logo_3');
+  }
 }

@@ -35,15 +35,15 @@
     </ul>
     <ul>
         <li>
-            <a href="http://<?php print $home_link_logo_1;?>" target="_blank"><img src="<?php print $theme_path;?>imagenes/icono-medellin-convention-medellin-travel.png" alt="">
+            <a href="http://<?php print $home_link_logo_1;?>" target="_blank"><img src="http://localhost/med/<?php print $theme_path;?>imagenes/icono-medellin-convention-medellin-travel.png" alt="">
             </a>
         </li>
         <li>
-            <a href="http://<?php print $home_link_logo_2;?>" target="_blank"><img src="<?php print $theme_path;?>imagenes/icono-alcaldia-medellin-medellin-travel.png" alt="">
+            <a href="http://<?php print $home_link_logo_2;?>" target="_blank"><img src="http://localhost/med/<?php print $theme_path;?>imagenes/icono-alcaldia-medellin-medellin-travel.png" alt="">
             </a>
         </li>
         <li>
-            <a href="http://<?php print $home_link_logo_3;?>" target="_blank"><img src="<?php print $theme_path;?>imagenes/icono-medellin-medellin-travel.png" alt="">
+            <a href="http://<?php print $home_link_logo_3;?>" target="_blank"><img src="http://localhost/med/<?php print $theme_path;?>imagenes/icono-medellin-medellin-travel.png" alt="">
             </a>
         </li>
     </ul>

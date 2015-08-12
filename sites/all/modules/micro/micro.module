@@ -83,44 +83,50 @@ function micro_form($form, &$form_state, $micro = NULL) {
       '#title' => t('Name'),
       '#weight' => -5,
       '#required' => TRUE,
-      '#default_value' => $micro->name,
+      '#default_value' => isset($micro->name) ? $micro->name : null,
     );
     $form['category'] = array(
       '#type' => 'select',
       '#title' => t('Categoría'),
       '#options' => $options,
-      '#default_value' => $micro->category,
+      '#default_value' => isset($micro->category) ? $micro->category : null,
     );
     $form['special_class'] = array(
       '#type' => 'textfield',
       '#description' => t('Digite transporte para incluir esta página en el tab de transporte'),
       '#title' => t('Clase especial'),
-      '#default_value' => $micro->special_class,
+      '#default_value' => isset($micro->special_class) ? $micro->special_class : null,
+    );
+    $form['special_link'] = array(
+      '#type' => 'textfield',
+      '#description' => t('Digite un link si quiere que esta página sea direccionada a una URL externa.'),
+      '#title' => t('Enlace externo'),
+      '#default_value' => isset($micro->special_link) ? $micro->special_link : null,
     );
     $form['likes'] = array(
       '#type' => 'checkbox',
       '#title' => t('Incluir número de likes?'),
-      '#default_value' => $micro->likes,
+      '#default_value' => isset($micro->likes) ? $micro->likes : null,
     );
     $form['social_fb'] = array(
       '#type' => 'checkbox',
       '#title' => t('Incluir ícono para compartir en Facebook?'),
-      '#default_value' => $micro->social_fb,
+      '#default_value' => isset($micro->social_fb) ? $micro->social_fb : null,
     );
     $form['social_tw'] = array(
       '#type' => 'checkbox',
       '#title' => t('Incluir ícono para compartir en Twitter?'),
-      '#default_value' => $micro->social_tw,
+      '#default_value' => isset($micro->social_tw) ? $micro->social_tw : null,
     );
     $form['share'] = array(
       '#type' => 'checkbox',
       '#title' => t('Incluir ícono para compartir en otras redes sociales?'),
-      '#default_value' => $micro->share,
+      '#default_value' => isset($micro->share) ? $micro->share : null,
     );
     $form['bookmarks'] = array(
       '#type' => 'checkbox',
       '#title' => t('Incluir ícono para agregar a favoritos?'),
-      '#default_value' => $micro->bookmarks,
+      '#default_value' => isset($micro->bookmarks) ? $micro->bookmarks : null,
     );
 
     $form['micro_lang'] = array(
@@ -130,19 +136,24 @@ function micro_form($form, &$form_state, $micro = NULL) {
 
     $form['fst_links_attachments'] = array(
       '#type' => 'fieldset',
-      '#title' => t('Título para enlaces y documentos adjuntos')
+      '#title' => t('Título para enlaces, documentos adjuntos y mapa')
 
     );
     $form['fst_links_attachments']['title_links'] = array(
       '#type' => 'textfield',
-      '#title' => t('Títlo para enlaces'),
-      '#default_value' => $micro->title_links,
+      '#title' => t('Título para enlaces'),
+      '#default_value' => isset($micro->title_links) ? $micro->title_links : null,
     );
     $form['fst_links_attachments']['title_attachments'] = array(
       '#type' => 'textfield',
-      '#title' => t('Títlo para archivos adjuntos'),
-      '#default_value' => $micro->title_links,
+      '#title' => t('Título para archivos adjuntos'),
+      '#default_value' => isset($micro->title_attachments) ? $micro->title_attachments : null,
     );
+    $form['fst_links_attachments']['map_title'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Título para la ubicación'),
+      '#default_value' => isset($micro->map_title) ? $micro->map_title : null,
+    );   
 
     
     field_attach_form('micro', $micro, $form, $form_state, $langcode);
@@ -153,7 +164,7 @@ function micro_form($form, &$form_state, $micro = NULL) {
             '#type' => 'submit',
             '#value' => isset($crpc->mid) ? t('Update') : t('Save'),
         )
-    );     
+    );  
 
     return $form;
 }
@@ -169,11 +180,11 @@ function micro_form_submit($form, &$form_state) {
 }
 
 function micro_permission() {
-    return [
-        'administer micro' => [
+    return array(
+        'administer micro' => array(
             t('Administer micro module')
-        ]        
-    ];
+        )        
+    );
 }
 
 /**

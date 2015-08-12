@@ -1,3 +1,4 @@
+<?php //var_dump($variables);?>
 <?php
     $logo = file_load($home_logo);
     if(!empty($logo)) {
@@ -17,8 +18,8 @@
                 <ul id="userMenu">
                     <li><?php print render($lang_block['content']);?>
                     </li>
-                    <li><a href=""><span class="icon-star-full"></span></a>
-                        <p>(3)</p>
+                    <li><!--<a href=""><span class="icon-star-full"></span></a>
+                        <p>(3)</p>-->
                     </li>
                     <li id="buscar">
                        <div>

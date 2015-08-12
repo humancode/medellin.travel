@@ -60,10 +60,19 @@ $base_path = base_path();
             <p><?php print render($term_description);?></p>
         </article>
         <nav id="menuLateral" class="col-md-3">
+            <?php
+                $url_params = current_path();
+                $params = explode('/', $url_params);
+                $current = $params[2];
+            ?>
             <ul>
                 <?php foreach($items_menu as $item_menu):?>
                     <li>
-                        <a href="<?php print $item_menu['tid'];?>"><?php print $item_menu['name'];?> </a><span>(<?php print $item_menu['number_items'];?>)</span>
+                        <?php if($current == $item_menu['tid']):?>
+                            <a class="experienciaActual" href="<?php print $item_menu['tid'];?>"><?php print $item_menu['name'];?> </a><span>(<?php print $item_menu['number_items'];?>)</span>
+                        <?php else:?>
+                            <a href="<?php print $item_menu['tid'];?>"><?php print $item_menu['name'];?> </a><span>(<?php print $item_menu['number_items'];?>)</span>
+                        <?php endif;?>
                     </li>
                 <?php endforeach;?>
             </ul>
@@ -79,6 +88,8 @@ $base_path = base_path();
                 // remove height and width to render for bootstrap
                 $img['#item']['height'] = '';
                 $img['#item']['width'] = '';
+                $img['#image_style'] = 'taxonomy-term-block';
+                //var_dump($img);
 
                 // Title
                 $title = field_get_items('micro', $entity, 'field_res_title');
@@ -89,13 +100,17 @@ $base_path = base_path();
             ?>
                 <article class="col-md-3 col-sm-6">
                     <div>
-                        <figure><?php print render($img);?>
+                        <figure><a href="<?php print $base_path;?>micro/<?php print $micro->mid;?>"><?php print render($img);?></a>
                             <h3 id="linea"><?php print render($title);?></h3>
                             <figcaption>
                                 <p>
                                     <?php print render($description);?>
                                 </p>
-                                <a href="<?php print $base_path;?>micro/<?php print $micro->mid;?>">Ver más</a>
+                                <?php if(!empty($entity->special_link)):?>
+                                    <br><a href="http://<?php print $entity->special_link;?>" target="_blank">Ir al sitio</a>
+                                <?php else:?>
+                                    <a href="<?php print $base_path;?>micro/<?php print $micro->mid;?>">Ver más</a>
+                                <?php endif;?>
                             </figcaption>
                         </figure>
                     </div>
@@ -110,15 +125,16 @@ $base_path = base_path();
                     $img = field_get_items('taxonomy_term', $term, 'field_taxonomy_image_mini');
                     $img = field_view_value('taxonomy_term', $term, 'field_taxonomy_image_mini', $img[0]);
                     // remove height and width to render for bootstrap
-                    $img['#item']['height'] = '';
-                    $img['#item']['width'] = '';
+                    /*$img['#item']['height'] = '';
+                    $img['#item']['width'] = '';*/
+                    $img['#image_style'] = 'taxonomy-term-block';
                     // Text
                     $text = field_get_items('taxonomy_term', $term, 'description_field');
                     $text = $text[0]['summary'];
                 ?>
                 <article class="col-md-3 col-sm-6">
                     <div>
-                        <figure><?php print render($img);?>
+                        <figure><a href="<?php print $base_path;?>taxonomy/term/<?php print $child->tid;?>"><?php print render($img);?></a>
                             <h3 id="linea"><?php print $child->name;?></h3>
                             <figcaption>
                                 <p>

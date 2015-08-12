@@ -1,4 +1,3 @@
-
 <?php
 
 $theme_path = drupal_get_path('theme', 'medtravel') . '/';
@@ -28,65 +27,58 @@ $theme_path = drupal_get_path('theme', 'medtravel') . '/';
  * $social_tw
  */
 
-//Header Img
-$header_img = field_get_items('micro', $micro, 'field_header_img');
-$header_img = field_view_value('micro', $micro, 'field_header_img', $header_img[0]);
+if($entity_not_found == false) {
+  //Header Img
+  $header_img = field_get_items('micro', $micro, 'field_header_img');
+  $header_img = field_view_value('micro', $micro, 'field_header_img', $header_img[0]);
+  $header_img['#image_style'] = 'micro-header';
 
 
-// Header Text
-$header_txt = field_get_items('micro', $micro, 'field_header_txt');
-$header_txt = field_view_value('micro', $micro, 'field_header_txt', $header_txt[0]);
+  // Header Text
+  $header_txt = field_get_items('micro', $micro, 'field_header_txt');
+  $header_txt = field_view_value('micro', $micro, 'field_header_txt', $header_txt[0]);
 
-//Main Description
-$info_description = field_get_items('micro', $micro, 'field_info_description');
-$info_description = field_view_value('micro', $micro, 'field_info_description', $info_description[0]);
+  //Main Description
+  $info_description = field_get_items('micro', $micro, 'field_info_description');
+  $info_description = field_view_value('micro', $micro, 'field_info_description', $info_description[0]);
 
-//Body Video
-$body_video = field_get_items('micro', $micro, 'field_body_video');
-$body_video = field_view_value('micro', $micro, 'field_body_video', $body_video[0]);
+  //Body Video
+  $body_video = field_get_items('micro', $micro, 'field_body_video');
+  $body_video = field_view_value('micro', $micro, 'field_body_video', $body_video[0]);
 
-//Body Img
-$body_img = field_get_items('micro', $micro, 'field_body_img');
-$body_img = field_view_value('micro', $micro, 'field_body_img', $body_img[0]);
- 
-//Body quote
-$body_quote= field_get_items('micro', $micro, 'field_body_quote');
-$body_quote = field_view_value('micro', $micro, 'field_body_quote', $body_quote[0]);
+  //Body Img
+  $body_img = field_get_items('micro', $micro, 'field_body_img');
+  $body_img = field_view_value('micro', $micro, 'field_body_img', $body_img[0]);
+  $body_img['#image_style'] = 'micro-body-img';
+  
 
-//Body quote author
-$body_quote_author = field_get_items('micro', $micro, 'field_body_quote_author');
-$body_quote_author = field_view_value('micro', $micro, 'field_body_quote_author', $body_quote_author[0]);
 
-//Map
-//Name: $map[%number]['name']
-//Street: $map[%number]['street']
-//Latitude: $map[%number]['latitude']
-//Longitude: $map[%number]['longitude']
+  //Body quote
+  $body_quote= field_get_items('micro', $micro, 'field_body_quote');
+  $body_quote = field_view_value('micro', $micro, 'field_body_quote', $body_quote[0]);
 
-//Image Gallery
-//Fid: $gallery[number]['fid']
-//Filename: $gallery[number]['filename']
-//Uri: $gallery[number]['uri']
+  //Body quote author
+  $body_quote_author = field_get_items('micro', $micro, 'field_body_quote_author');
+  $body_quote_author = field_view_value('micro', $micro, 'field_body_quote_author', $body_quote_author[0]);
 
-// Mod Image & Text
-$mod_img_txts = field_get_items('micro', $micro, 'field_mod_img_txt');
+  // Mod Image & Text
+  $mod_img_txts = field_get_items('micro', $micro, 'field_mod_img_txt');
 
-//Footer links
-$footerLinks = field_get_items('micro', $micro, 'field_footer_link');
-// Txt: $footerLinks[%number]['field_footer_link_txt']['und'][0]['value']
-// Url: $footerLinks[%number]['field_footer_link_url']['und'][0]['value']
+  //Footer links
+  $footerLinks = field_get_items('micro', $micro, 'field_footer_link');
 
-//Attachments
-$footerAttachments = field_get_items('micro', $micro, 'field_footer_attachment');
-//Txt: $footerAttachments[%number]['field_footer_attachment_txt']['und'][0]['value']
-//Url: $footerAttachments[%number]['field_footer_attachment_att']['und'][0]['value']
- 
-//List Items
-$listItems = field_get_items('micro', $micro, 'field_list_items');
-//Title: $listItems[%number]['field_list_items_title']['und'][0]['value']
-//Description: $listItems[%number]['field_list_items_description']['und'][0]['value']
+  //Attachments
+  $footerAttachments = field_get_items('micro', $micro, 'field_footer_attachment');
 
- ?>
+  //List Items
+  $listItems = field_get_items('micro', $micro, 'field_list_items');
+
+}
+
+?>
+
+<?php if($entity_not_found == false):?>
+
 <?php if(isset($page['content']['system_main']['#id']) && $page['content']['system_main']['#id'] == 'micro-form'):?>
   <?php print render($page['content']);?>
 
@@ -138,18 +130,20 @@ $listItems = field_get_items('micro', $micro, 'field_list_items');
     jQuery("#like-load").load("/med/ajax-like/"+mid);
   }
 </script>
+
 <section id="bannerInterior">
 
-      <?php if(!empty($header_img)):?>
+      <?php if($header_img['#item'] != null):?>
         <figure><?php print render($header_img);?>
         </figure>
       <?php endif;?>
-        <article class="container">
-            <?php if(!empty($header_txt)):?>
-              <h1><?php print render($header_txt);?></h1>
-            <?php endif;?>
 
+      <?php if(!empty($header_txt['#markup'])):?>
+        <article class="container">
+            <h1><?php print render($header_txt);?></h1>
         </article>
+      <?php endif;?>
+
         <nav class="container" id="favoritos">
             <ul>
                 <?php if((!empty($likes)) && ($likes == 1)):?>
@@ -161,26 +155,13 @@ $listItems = field_get_items('micro', $micro, 'field_list_items');
                 <?php if( (!empty($social_tw) && $social_tw == 1) || (!empty($social_fb) && $social_fb == 1) || (!empty($share) && $share == 1)):?>
                   <li><?php print render($page['share_this']);?></li>
                 <?php endif;?>
-                <!--<?php //if((!empty($social_tw)) && ($social_tw == 1)):?>
-                  <li><a href=""><span class="icon-twitter3"></span></a>
-                  </li>
-                <?php //endif;?>
-                <?php //if((!empty($social_fb)) && ($social_fb == 1)):?>
-                  <li><a href=""><span class="icon-facebook3"></span></a>
-                  </li>
-                <?php //endif;?>
-                <?php //if((!empty($share)) && ($share == 1)):?>
-                  <li><?php //print render($page['share_this']);?>
-
-                  </li>
-                <?php //endif;?>-->
             </ul>
 
               <ul>
-                <?php if((!empty($bookmarks)) && ($bookmarks == 1)):?>
-                  <li><a href=""><span class="icon-star-full"></span><p>Añadir a mis favoritos</p></a>
-                  </li>
-                <?php endif;?>
+                <?php //if((!empty($bookmarks)) && ($bookmarks == 1)):?>
+                  <!--<li><a href=""><span class="icon-star-full"></span><p>Añadir a mis favoritos</p></a>
+                  </li>-->
+                <?php //endif;?>
               </ul>
             
         </nav>
@@ -208,11 +189,14 @@ $listItems = field_get_items('micro', $micro, 'field_list_items');
             <?php 
               $title = $mod_img_txt['field_mod_img_txt_title']['und'][0]['safe_value'];
               $txt = $mod_img_txt['field_mod_img_txt_txt']['und'][0]['safe_value'];
-              $image = file_create_url($mod_img_txt['field_mod_img_txt_img']['und'][0]['uri']);
+
+              $image_uri = $mod_img_txt['field_mod_img_txt_img']['und'][0]['uri'];
+              $image_vars = array('style_name' => 'mod-img-txt', 'path' => $image_uri);
               $class = ($counter % 2 == 0) ? "mod-img-txt-right" : "mod-img-txt-left";
+              $image = theme_image_style($image_vars);
             ?>
             <article class="textoImagen <?php print $class;?>">
-                <figure><img src="<?php print $image;?>" alt="">
+                <figure><?php print render($image);?>
                 </figure>
                 <h3><?php print $title;?></h3>
                 <!-- for ckeditor includes a <p> tag already-->
@@ -221,41 +205,44 @@ $listItems = field_get_items('micro', $micro, 'field_list_items');
             <?php $counter++;?>
           <?php endforeach;?>
         <?php endif;?>
+          <?php if(!empty($body_img['#item']) || !empty($listItems)):?>
+            <article id="infoEvento">
+                <?php if(!empty($body_img['#item'])):?>
+                  <figure><?php print render($body_img);?>
+                  </figure>
+                <?php endif;?>
+                <?php if(!empty($listItems)):?>
+                  <aside>
+                      <p>
+                          <?php foreach($listItems as $item):?>
+                            <?php
+                              $title = $item['field_list_items_title']['und'][0]['safe_value'];
+                              $desc = $item['field_list_items_description']['und'][0]['safe_value'];
+                            ?>
+                            <strong><?php print $title;?></strong> <?php print $desc;?>
+                            <br>
+                            <br>
+                          <?php endforeach;?>
+                      </p>
 
-          <article id="infoEvento">
-              <figure><?php print render($body_img);?>
-              </figure>
-              <?php if(!empty($listItems)):?>
-                <aside>
-                    <p>
-                        <?php foreach($listItems as $item):?>
-                          <?php
-                            $title = $item['field_list_items_title']['und'][0]['safe_value'];
-                            $desc = $item['field_list_items_description']['und'][0]['safe_value'];
-                          ?>
-                          <strong><?php print $title;?></strong> <?php print $desc;?>
-                          <br>
-                          <br>
-                        <?php endforeach;?>
-                    </p>
+                  </aside>
+                <?php endif;?>
+          </article>
+        <?php endif;?>
 
-                </aside>
-              <?php endif;?>
-        </article>
-
-        <?php if(!empty($body_video) || !empty($body_quote) || !empty($body_quote_author)):?>
+        <?php if(!empty($body_video['#item']) || !empty($body_quote['#markup']) || !empty($body_quote_author['#markup'])):?>
           <article class="video">
-          <?php if(!empty($body_video)):?>
+          <?php if(!empty($body_video['#item'])):?>
             <iframe width="100%" height="768" src="<?php print render($body_video);?>" frameborder="0" allowfullscreen></iframe>
           <?php endif;?>
-              <?php if(!empty($body_quote) || !empty($body_quote_author)):?>
+              <?php if(!empty($body_quote['#markup']) || !empty($body_quote_author['#markup'])):?>
                 <aside>
                     <p>
-                      <?php if(!empty($body_quote)):?>
+                      <?php if(!empty($body_quote['#markup'])):?>
                         <strong>"<?php print render($body_quote);?>"</strong>
                         <br>
                       <?php endif;?>
-                      <?php if(!empty($body_quote_author)):?>
+                      <?php if(!empty($body_quote_author['#markup'])):?>
                           <br> <?php print render($body_quote_author);?>
                       <?php endif;?>
                     </p>
@@ -272,8 +259,7 @@ $listItems = field_get_items('micro', $micro, 'field_list_items');
           <div class="am-container" id="am-container">
               <?php foreach($gallery as $image):?>
                 <?php $image = file_create_url($image['uri']);?>
-                <a href="#"><img src="<?php print $image;?>">
-                </a>
+                <img src="<?php print $image;?>">
               <?php endforeach;?>
               </a>
           </div>
@@ -317,31 +303,34 @@ $listItems = field_get_items('micro', $micro, 'field_list_items');
             google.maps.event.addDomListener(window, 'load', initialize);
 
           </script>
+          <center>
+            <h2><?php print $map_title;?></h2>
+          </center>
           <article id="mapa"></article>
         <?php endif;?>
 
 
           <?php if(!empty($footerLinks) || !empty($footerAttachments)):?>
            <article id="moduloEnlases">
-            <p><?php print $title_links;?></p>
                 <?php if(!empty($footerLinks)):?>
                    <ul>
+                    <li><h2><?php print $title_links;?></h2></li>
                        <?php foreach($footerLinks as $link):?> 
                           <?php 
                             $url = $link['field_footer_link_url']['und'][0]['safe_value'];
                             $txt = $link['field_footer_link_txt']['und'][0]['safe_value'];
                           ?>
-                          <li><a href="<?php print $url;?>"><?php print $txt;?></a></li>
+                          <li><a href="http://<?php print $url;?>" target="_blank"><?php print $txt;?></a></li>
                        <?php endforeach;?>
                    </ul>
                 <?php endif;?>
                
                <?php if(!empty($footerAttachments)):?>
-                  <p><?php print $title_attachments;?></p>
                    <ul id="descargas">
+                    <li><h2><?php print $title_attachments;?></h2></li>
                    <?php foreach($footerAttachments as $attachment):?> 
                       <?php 
-                        $url = $attachment['field_footer_attachment_att']['und'][0]['safe_value'];
+                        $url = file_create_url($attachment['field_footer_attachment_att']['und'][0]['uri']);
                         $txt = $attachment['field_footer_attachment_txt']['und'][0]['safe_value'];
                       ?>
                       <li> <a href="<?php print $url;?>"><span class="icon-descargar-icon"></span><?php print $txt;?></a></li>
@@ -357,3 +346,23 @@ $listItems = field_get_items('micro', $micro, 'field_list_items');
        </article>
     </section>
   <?php endif;?>
+
+  <?php else:?>
+    
+    <section id="bannerInterior">
+
+        <!--<figure><img src="imagenes/banner-interior.jpg" alt="">
+        </figure>-->
+        <article class="container">
+            <h1>Página no encontrada</h1>
+
+        </article>
+    </section>
+
+    <section class="container" id="contenido">
+      <article>
+      La página solicitada no se encuentra
+      </article>
+    </section>
+
+   <?php endif;?>

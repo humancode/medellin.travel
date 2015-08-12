@@ -4,60 +4,56 @@
  *
  * Available vars:
  *
- *   All items are under $variables['page']['content']['system_main']['FIELDNAME']['#items']
+ *  
  */
 function medtravel_preprocess_page(&$variables) {
   // loads entity data
   $url_params = current_path();
   $params = explode('/', $url_params);
-  //var_dump(current_path());
 	// if belongs to micro entity type
 	if($params[0] == 'micro') {
 
     $id = $params[1];
 
 		$entity = entity_load('micro', array($id));
-		$entity = $entity[$id];
-		// get the current language
-		$lang = entity_language('micro', $entity);
+    if(!empty($entity)) {
+      $variables['entity_not_found'] = false;
+  		$entity = $entity[$id];
+  		// get the current language
+  		$lang = entity_language('micro', $entity);
 
-    $variables['micro'] = $entity;
-		// builds variables
-		$header_img = file_load($entity->field_header_img['und'][0]['fid']);
-		//$variables['header_img'] = image_style_url('banner_interior', $header_img->filename);
+      $variables['micro'] = $entity;
+  		// builds variables
+  		$header_img = file_load($entity->field_header_img['und'][0]['fid']);
 
-		//$variables['header_txt'] = $entity->field_header_txt[$lang][0]['safe_value'];
-		//$variables['info_description'] = $entity->field_info_description[$lang][0]['safe_value'];
-		//$variables['body_video'] = $entity->field_body_video['und'][0]['safe_value'];
+  		$body_img = file_load($entity->field_body_img['und'][0]['fid']);
 
-		$body_img = file_load($entity->field_body_img['und'][0]['fid']);
-		//$variables['body_img'] = image_style_url('mod_img_txt_style', $body_img->filename);
+  		// field with multiple values
+  		$variables['map'] = $entity->field_map['und'];
 
-		//$variables['body_quote'] = $entity->field_body_quote[$lang][0]['safe_value'];
-		//$variables['body_quote_author'] = $entity->field_body_quote_author[$lang][0]['safe_value'];
+  		$variables['gallery'] = $entity->field_footer_gallery['und'];
+  		$variables['footerLinks'] = $entity->field_footer_link[$lang];
+  		$variables['footerAttachments'] = $entity->field_footer_attachment[$lang];
+  		$variables['listItems'] = $entity->field_list_items[$lang];
+  		
+  		$variables['mid'] = $entity->mid;
+  		$variables['name'] = $entity->name;
+  		$variables['category'] = $entity->category;
+  		$variables['likes'] = $entity->likes;
+      $variables['num_likes'] = $entity->num_likes;
+  		$variables['social_fb'] = $entity->social_fb;
+  		$variables['social_tw'] = $entity->social_tw;	
+      $variables['share'] = $entity->share; 
+      $variables['bookmarks'] = $entity->bookmarks;
+      $variables['title_links'] = $entity->title_links;
+      $variables['title_attachments'] = $entity->title_attachments; 
+      $variables['map_title'] = $entity->map_title;   
 
-		// field with multiple values
-		$variables['map'] = $entity->field_map['und'];
-
-		$variables['gallery'] = $entity->field_footer_gallery['und'];
-		//$variables['blockImgTxt'] = $entity->field_mod_img_txt[$lang];
-		$variables['footerLinks'] = $entity->field_footer_link[$lang];
-		$variables['footerAttachments'] = $entity->field_footer_attachment[$lang];
-		$variables['listItems'] = $entity->field_list_items[$lang];
-		
-		$variables['mid'] = $entity->mid;
-		$variables['name'] = $entity->name;
-		$variables['category'] = $entity->category;
-		$variables['likes'] = $entity->likes;
-    $variables['num_likes'] = $entity->num_likes;
-		$variables['social_fb'] = $entity->social_fb;
-		$variables['social_tw'] = $entity->social_tw;	
-    $variables['share'] = $entity->share; 
-    $variables['bookmarks'] = $entity->bookmarks;
-    $variables['title_links'] = $entity->title_links;
-    $variables['title_attachments'] = $entity->title_attachments;    
-
-		$variables['related'] = module_invoke('related', 'block_view', 'related');
+  		$variables['related'] = module_invoke('related', 'block_view', 'related');
+    }
+    else {
+      $variables['entity_not_found'] = true;
+    }
 
 	}
 	if(drupal_is_front_page()) {
@@ -71,6 +67,8 @@ function medtravel_preprocess_page(&$variables) {
     if($langcode == 'en') {
       $langcode = '_en';
     }
+
+    $variables['langcode'] = $langcode;
 
     //get data
     $data = get_home_data();
@@ -89,7 +87,7 @@ function medtravel_preprocess_page(&$variables) {
 		if(!empty($video_img)) {
 			$variables['home_video_img'] = file_create_url($video_img->uri);
 		}
-
+    
 		$variables['home_title'] = $data['title'.$langcode];
 		$variables['home_description'] = $data['description'.$langcode];
 		$variables['home_que_visitar'] = $data['tab_que_visitar'];
@@ -288,39 +286,49 @@ function medtravel_preprocess_sharethis(&$vars) {
     $id = $params[1];
 
     $entity = entity_load('micro', array($id));
-    $entity = $entity[$id];
+    if(!empty($entity)) {
+      $variables['entity_not_found'] == false;
+      $entity = $entity[$id];
 
-    // get wich social nets active form entity
-    $tw = $entity->social_tw;
-    $fb = $entity->social_fb;
-    $share = $entity->share;
+      // get wich social nets active form entity
+      $tw = $entity->social_tw;
+      $fb = $entity->social_fb;
+      $share = $entity->share;
 
-    $tw_str = '"Twitter:twitter",';
-    $fb_str = '"Facebook:facebook",';
-    $share_str = '"ShareThis:sharethis",';
+      $tw_str = '"Twitter:twitter",';
+      $fb_str = '"Facebook:facebook",';
+      $share_str = '"ShareThis:sharethis",';
 
-    //creates the string
-    $string = '';
-    if($tw == 1) {
-      $string = $string . $tw_str;
+      //creates the string
+      $string = '';
+      if($tw == 1) {
+        $string = $string . $tw_str;
+      }
+      if($fb == 1) {
+        $string = $string . $fb_str;
+      }
+      if($share == 1) {
+        $string = $string . $share_str;
+      }
+      
+      // change title
+      $title = field_get_items('micro', $entity, 'field_res_title');
+      $title = field_view_value('micro', $entity, 'field_res_title', $title[0]);
+      $title = $title['#markup'];
+
+      // change services string
+      $vars['data_options']['services'] = $string;
+      $vars['m_title'] = $title;
     }
-    if($fb == 1) {
-      $string = $string . $fb_str;
+    else {
+      $variables['entity_not_found'] == true;
     }
-    if($share == 1) {
-      $string = $string . $share_str;
-    }
-    
-    // change title
-    $title = field_get_items('micro', $entity, 'field_res_title');
-    $title = field_view_value('micro', $entity, 'field_res_title', $title[0]);
-    $title = $title['#markup'];
-
-    // change services string
-    $vars['data_options']['services'] = $string;
-    $vars['m_title'] = $title;
 
   }
+}
+
+function medtravel_preprocess_language_content(&$vars) {
+  var_dump($vars);
 }
 
 function medtravel_preprocess_html(&$vars) {
@@ -332,27 +340,33 @@ function medtravel_preprocess_html(&$vars) {
     // loads entity
     $id = $params[1];
     $entity = entity_load('micro', array($id));
-    $entity = $entity[$id];
+    if(!empty($entity)) {
+      $vars['entity_not_found'] = false;
+      $entity = $entity[$id];
 
-    $title = field_get_items('micro', $entity, 'field_res_title');
-    $title = field_view_value('micro', $entity, 'field_res_title', $title[0]);
-    $title = $title['#markup'];
+      $title = field_get_items('micro', $entity, 'field_res_title');
+      $title = field_view_value('micro', $entity, 'field_res_title', $title[0]);
+      $title = $title['#markup'];
 
-    $description = field_get_items('micro', $entity, 'field_res_description');
-    $description = field_view_value('micro', $entity, 'field_res_description', $description[0]);
-    $description = $description['#markup'];
+      $description = field_get_items('micro', $entity, 'field_res_description');
+      $description = field_view_value('micro', $entity, 'field_res_description', $description[0]);
+      $description = $description['#markup'];
 
-    $img = field_get_items('micro', $entity, 'field_res_img');
-    $img = field_view_value('micro', $entity, 'field_res_img', $img[0]);
-    $img = file_load($img['#item']['fid']);
-    $img = file_create_url($img->uri);
-    //$img = $img->source;
+      $img = field_get_items('micro', $entity, 'field_res_img');
+      $img = field_view_value('micro', $entity, 'field_res_img', $img[0]);
+      $img = file_load($img['#item']['fid']);
+      $img = file_create_url($img->uri);
+      //$img = $img->source;
 
 
-    // configure og's
-    $vars['og_title'] = $title;
-    $vars['og_description'] = $description;
-    $vars['og_img'] = $img;
+      // configure og's
+      $vars['og_title'] = $title;
+      $vars['og_description'] = $description;
+      $vars['og_img'] = $img;
+    }
+    else {
+      $variables['entity_not_found'] == true;
+    }
 
   }
 } 

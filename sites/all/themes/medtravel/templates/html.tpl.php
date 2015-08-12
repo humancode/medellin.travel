@@ -1,5 +1,16 @@
 <?php
 
+if(empty($variables['page_top'])); {
+  // get home data
+  $data = get_home_data();
+  $data = $data[0];
+
+  $home_logo = $data['logo'];
+  $main_menu_block = module_invoke('home_menu', 'block_view', 'home_menu_block');
+  $lang_block = module_invoke('locale', 'block_view', 'language_content');
+
+  include_once('region--page_top.tpl.php');
+}
 /**
  * @file
  * Default theme implementation to display the basic html structure of a single
