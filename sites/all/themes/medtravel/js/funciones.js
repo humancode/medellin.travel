@@ -23,8 +23,11 @@ var pathObj = {
 $(document).ready(function () {
 
 
-
-                var vid = document.getElementById("bgvid");
+                // este codigo de video creaba conflicto con el menu hover
+                // al no reconocer vid. Toda la función de video fue movida a
+                // page--front.tpl.php
+                
+                /*var vid = document.getElementById("bgvid");
                 var pauseButton = document.querySelector("#pararVideo");
 
                 function vidFade() {
@@ -48,7 +51,7 @@ $(document).ready(function () {
                         vid.pause();
                         pauseButton.innerHTML = "Reanudar";
                     }
-                })
+                })*/
 
 
 

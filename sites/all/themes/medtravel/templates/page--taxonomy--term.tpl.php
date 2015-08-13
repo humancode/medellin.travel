@@ -109,7 +109,12 @@ $base_path = base_path();
                                 <?php if(!empty($entity->special_link)):?>
                                     <br><a href="http://<?php print $entity->special_link;?>" target="_blank">Ir al sitio</a>
                                 <?php else:?>
-                                    <a href="<?php print $base_path;?>micro/<?php print $micro->mid;?>">Ver más</a>
+                                    <?php if($langcode == 'es'):?>
+                                        <a href="<?php print $base_path;?>micro/<?php print $micro->mid;?>">Ver más</a>
+                                    <?php endif;?>
+                                    <?php if($langcode == 'en'):?>
+                                        <a href="<?php print $base_path;?>en/micro/<?php print $micro->mid;?>">Read more</a>
+                                    <?php endif;?>
                                 <?php endif;?>
                             </figcaption>
                         </figure>
@@ -140,7 +145,12 @@ $base_path = base_path();
                                 <p>
                                     <?php print render($text);?>
                                 </p>
-                                <a href="<?php print $base_path;?>taxonomy/term/<?php print $child->tid;?>">Ver más</a>
+                                <?php if($langcode == 'es'):?>
+                                    <a href="<?php print $base_path;?>taxonomy/term/<?php print $child->tid;?>">Ver más</a>
+                                <?php endif;?>
+                                <?php if($langcode == 'en'):?>
+                                    <a href="<?php print $base_path;?>en/taxonomy/term/<?php print $child->tid;?>">Read more</a>
+                                <?php endif;?>
                             </figcaption>
                         </figure>
                     </div>

@@ -5,7 +5,7 @@
         $home_logo = file_create_url($logo->uri);
     }
 ?>
- <nav id="menuSuperior">
+<nav id="menuSuperior">
             <div class="container">
                 <span class="icon-menu-icon"></span>
                 <figure>

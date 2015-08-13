@@ -123,6 +123,9 @@ function medtravel_preprocess_page(&$variables) {
 	// if is a taxonomy term
 	if(isset($variables['page']['content']['system_main']['term_heading'])) {
 
+    global $language;
+    $langcode = $language->language;
+
 		$tid = arg(2);
     $items = array();
 
@@ -170,6 +173,7 @@ function medtravel_preprocess_page(&$variables) {
 		$variables['term_description'] = $description;
 		$variables['items_menu'] = $items;
 		$variables['micros'] = fieldQueryMicro($tid);
+    $variables['langcode'] = $langcode;
 
 	}
 

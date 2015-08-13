@@ -333,7 +333,7 @@ if($entity_not_found == false) {
                         $url = file_create_url($attachment['field_footer_attachment_att']['und'][0]['uri']);
                         $txt = $attachment['field_footer_attachment_txt']['und'][0]['safe_value'];
                       ?>
-                      <li> <a href="<?php print $url;?>"><span class="icon-descargar-icon"></span><?php print $txt;?></a></li>
+                      <li> <a href="<?php print $url;?>" target="_blank"><span class="icon-descargar-icon"></span><?php print $txt;?></a></li>
                    <?php endforeach;?>
                    </ul>
                 <?php endif;?>
@@ -361,7 +361,12 @@ if($entity_not_found == false) {
 
     <section class="container" id="contenido">
       <article>
-      La página solicitada no se encuentra
+        <?php 
+          $pt = drupal_get_path('theme','medtravel'); 
+          $bp = base_path();
+        ?>
+        <img src="<?php print $bp.$pt;?>/imagenes/logo.png">
+        <p>La página solicitada no se encuentra</p>
       </article>
     </section>
 

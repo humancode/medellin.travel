@@ -1,5 +1,5 @@
 <section id="video">
-         <video autoplay loop muted poster="<?php print $home_video_img;?>" id="bgvid">
+         <video autoplay muted loop  poster="<?php print $home_video_img;?>" id="bgvid">
             <source src="<?php print $home_video;?>" type="video/mp4"/>
                 <!--<source src="<?php //print $home_video_img;?>" type="video/webm"/>
                     <source src="video/bureau.ogv" type="video/ogg"/>-->
@@ -16,7 +16,7 @@
             <p class="parrafoGrande"><?php print $home_description;?></p>
         </article>
         <ul>
-            <li><a id="silenciarVideo" class="btnBlanco">Silenciar</a>
+            <li><a id="silenciarVideo" class="btnBlanco">Escuchar ))</a>
             </li>
             <li><a id="pararVideo" class="btnBlanco">Pausar video</a>
             </li>
@@ -32,7 +32,7 @@
                         <?php if($langcode == '_en'):?>
                           Places
                         <?php else:?>
-                          Que visitar
+                          Qué visitar
                         <?php endif;?> 
                         </a>
                         </li>
@@ -61,7 +61,7 @@
                         <?php if($langcode == '_en'):?>
                           Where to stay
                         <?php else:?>
-                          Donde quedarme
+                          Dónde quedarme
                         <?php endif;?> 
                         </a>
                         </li>
@@ -81,7 +81,7 @@
                         <?php if($langcode == '_en'):?>
                           Transport
                         <?php else:?>
-                          Como moverme
+                          Cómo moverme
                         <?php endif;?> 
                         </a>
                         </li>
@@ -124,3 +124,35 @@
         <figure class="col-md-4 col-sm-4"><img src="imagenes/imagen-muestra-instageam-medellin-travel.jpg" alt="">
         </figure>-->
     </section>
+    <script>
+        (function ($) {
+            var vid = document.getElementById("bgvid");
+            var pauseButton = document.querySelector("#pararVideo");
+
+            function vidFade() {
+                vid.classList.add("stopfade");
+            }
+
+            vid.addEventListener('ended', function () {
+                // only functional if "loop" is removed 
+                vid.pause();
+                // to capture IE10
+                vidFade();
+            });
+
+            pauseButton.addEventListener("click", function () {
+                vid.classList.toggle("stopfade");
+                if (vid.paused) {
+                    vid.play();
+                    pauseButton.innerHTML = "Pausar video";
+                } else {
+                    vid.pause();
+                    pauseButton.innerHTML = "Reanudar";
+                }
+            })
+
+            $('#silenciarVideo').click(function(){
+                vid.muted = false
+            });
+        }(jQuery));
+    </script>

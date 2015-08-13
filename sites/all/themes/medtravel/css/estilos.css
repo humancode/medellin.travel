@@ -83,6 +83,7 @@
 
 .icon-descargar-icon:before {
     content: "\e609";
+    color: #ff4747;
 }
 
 .icon-left-icon:before {
@@ -238,15 +239,16 @@ nav#menuSuperior {
     background: rgba(255, 255, 255, 0.7);
     position: fixed;
     z-index: 2;
+    top:0;
 }
 
 nav#menuSuperior .container {
     margin-top: 10px;
 }
-/* cambi0 humancode -- antes height 40*/
+
 nav#menuSuperior ul {
     display: inline-block;
-    height: 50px;
+    height: 40px;
 }
 
 nav#menuSuperior ul li {
@@ -304,10 +306,9 @@ video#bgvid {
     top: -250px;
 }
 
-a,
-a:hover {
+a, a:hover {
+    color: #ff4949;
     text-decoration: none;
-    color: white;
 }
 
 a:visited {
@@ -366,7 +367,7 @@ a:visited {
 }
 
 #busquedaRapida article {
-    padding: 30px;
+    padding: 24px 10px;
     display: none;
     position: absolute;
     width: 100%;
@@ -534,7 +535,7 @@ a:visited {
 #descargas li a {
     color: #494949 !important;
     margin: 10px 0px;
-    font-size: 18px;
+    font-size: 14px;
 }
 
 #descargas li a:hover {
@@ -671,7 +672,7 @@ a:visited {
     background: rgba(232, 232, 232, 0.9);
     text-align: center;
     margin-top: 0px;
-    padding-top: 70px;
+    padding-top: 30px;
 }
 
 #interna1 figure figcaption a {
@@ -1415,6 +1416,7 @@ height: auto !important;
     }
     #buscar input {
         padding: 0;
+        width:300px;
     }
     #bannerInterior {
         height: auto;
@@ -1454,6 +1456,7 @@ height: auto !important;
     }
     #video {
         height: auto;
+        height:210px;
     }
     #video h1 {
         font-size: 4em;
@@ -1461,6 +1464,7 @@ height: auto !important;
     #video video {
         width: 100%;
         height: auto;
+        z-index:999999;
     }
     #video section {
         position: relative;
@@ -1497,7 +1501,7 @@ height: auto !important;
         margin-top: 20px;
     }
     #sliderInterior h1 {
-        left: 36%;
+        left: 30%;
     }
     #temporada p {
         margin: 0;
@@ -1567,6 +1571,22 @@ height: auto !important;
     }
     .video iframe {
         height: auto;
+    }
+    
+    footer {
+        margin-top: 0px;
+        font-size: 12px;
+    }
+    
+    #sliderInterior .pagination {
+        margin-left: -28px;
+    }
+    
+    article.container{
+        display:none;
+    }
+    #favoritos ul:last-child {
+        float: left;
     }
 }
 /*ESTILOS REQUERIDOS ADMIN DRUPAL*/
@@ -1673,6 +1693,12 @@ html.js fieldset.collapsed {
     margin-right: 20px;
 }
 
+#video ul {
+    bottom: 50px;
+    position: absolute;
+    right: 0;
+    width: 100%;
+}
 
 /*** custom for drupal *******/
 .mod-img-txt-left figure {
@@ -1727,4 +1753,16 @@ html.js fieldset.collapsed {
 }
 .not-found-micro {
     
+}
+
+#favoritos ul {
+    display: inline-block;
+    float: left;
+    top: 0;
+    width: 100%;
+}
+
+.not-logged-in .region {
+    margin: 0 auto;
+    width: 100%;
 }

@@ -108,6 +108,9 @@ function related_theme($existing, $type, $theme, $path) {
 function template_preprocess_related_block_item(&$variables) {
 	$node = $variables['node'];
 
+  global $language;
+  $langcode = $language->language;
+
   // Image
 	$img = field_get_items('micro', $node, 'field_res_img');
   $img = field_view_value('micro', $node, 'field_res_img', $img[0]);
@@ -129,5 +132,6 @@ function template_preprocess_related_block_item(&$variables) {
 	$variables['img'] = $img;
 	$variables['title'] = $title;
 	$variables['description'] = $description;
+  $variables['langcode'] = $langcode;
 
 }
